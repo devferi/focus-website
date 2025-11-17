@@ -25,7 +25,7 @@ export default function Footer() {
         </div>
         <div className="flex flex-wrap items-center justify-between gap-4 py-6 text-sm">
           <p>© {year} Focus Trading Contractor. Seluruh hak cipta.</p>
-          <p>Made in Surabaya • Jakarta • Bali.</p>
+          <p>Kualitas & Ketepatan Waktu • Solusi Konstruksi Terintegrasi</p>
         </div>
       </div>
     </footer>

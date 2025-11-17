@@ -21,11 +21,11 @@ export default function Navigation() {
             onClick={() => scrollToSection('hero')} 
             className="flex items-center gap-3"
           >
-            <div className="h-10 w-10 rounded-xl bg-white text-brand font-black grid place-content-center">FT</div>
-            <div className="leading-tight text-sm">
-              <p className="font-semibold tracking-wide text-white/70 uppercase">Focus Trading</p>
-              <p className="text-white text-base font-bold -mt-0.5">Contractor</p>
-            </div>
+            <img 
+              src="https://focustradingcontractor.com/wp-content/uploads/2023/12/LogoBiru-removebg.png" 
+              alt="Focus Trading Contractor" 
+              className="h-10 w-auto object-contain"
+            />
           </button>
           
           <nav className="hidden md:flex items-center gap-6 text-sm font-medium">
