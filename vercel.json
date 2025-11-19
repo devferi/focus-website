@@ -1,1 +1,4 @@
-{"rewrites":[{"source":"/(.*)","destination":"/index.html"}]}
+{
+  "rootDirectory": "focus-website-nextjs",
+  "framework": "nextjs"
+}

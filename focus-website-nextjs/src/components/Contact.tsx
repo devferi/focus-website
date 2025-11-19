@@ -1,9 +1,52 @@
 'use client';
 
+import { useState } from 'react';
+
 export default function Contact() {
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+  const [previews, setPreviews] = useState<string[]>([]);
+
+  const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(event.target.files || []);
+    
+    // Validasi file (hanya gambar)
+    const validFiles = files.filter(file => 
+      file.type.startsWith('image/') && file.size <= 5 * 1024 * 1024 // Max 5MB
+    );
+
+    if (validFiles.length !== files.length) {
+      alert('Beberapa file tidak valid. Pastikan hanya gambar dengan ukuran maksimal 5MB.');
+    }
+
+    setSelectedFiles(prev => [...prev, ...validFiles]);
+
+    // Buat preview untuk gambar yang dipilih
+    validFiles.forEach(file => {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setPreviews(prev => [...prev, e.target?.result as string]);
+      };
+      reader.readAsDataURL(file);
+    });
+  };
+
+  const removeFile = (index: number) => {
+    setSelectedFiles(prev => prev.filter((_, i) => i !== index));
+    setPreviews(prev => prev.filter((_, i) => i !== index));
+  };
+
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    alert('Terima kasih, tim kami akan menghubungi Anda.');
+    
+    if (selectedFiles.length > 0) {
+      alert(`Terima kasih! Permintaan Anda dengan ${selectedFiles.length} gambar telah dikirim. Tim kami akan menghubungi Anda.`);
+    } else {
+      alert('Terima kasih, tim kami akan menghubungi Anda.');
+    }
+    
+    // Reset form
+    setSelectedFiles([]);
+    setPreviews([]);
   };
 
   return (
@@ -101,6 +144,67 @@ export default function Contact() {
                   className="mt-1 w-full rounded-2xl border border-slate-200 px-4 py-3 focus:border-brand focus:ring-brand" 
                   placeholder="Ruang lingkup, kebutuhan khusus, standar internal"
                 ></textarea>
+              </div>
+              
+              {/* Upload Gambar */}
+              <div>
+                <label className="text-sm font-medium text-slate-600">Gambar Proyek (Opsional)</label>
+                <div className="mt-2 border-2 border-dashed border-gray-300 rounded-xl p-4 text-center hover:border-blue-400 transition-colors duration-300">
+                  <div className="mb-3">
+                    <svg className="w-8 h-8 text-gray-400 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                    </svg>
+                    <p className="text-sm text-gray-600 mb-1">Tambahkan gambar proyek (maks. 5 gambar)</p>
+                    <p className="text-xs text-gray-500">Format: JPG, PNG, GIF (Maks. 5MB per file)</p>
+                  </div>
+                  
+                  <input
+                    type="file"
+                    multiple
+                    accept="image/*"
+                    onChange={handleFileSelect}
+                    className="hidden"
+                    id="project-images"
+                  />
+                  
+                  <label
+                    htmlFor="project-images"
+                    className="inline-flex items-center px-4 py-2 bg-gray-100 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-200 transition-colors duration-200 cursor-pointer"
+                  >
+                    <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                    </svg>
+                    Pilih Gambar
+                  </label>
+                </div>
+                
+                {/* Preview Gambar */}
+                {previews.length > 0 && (
+                  <div className="mt-4">
+                    <p className="text-sm font-medium text-slate-600 mb-2">Preview ({previews.length} gambar)</p>
+                    <div className="grid grid-cols-3 sm:grid-cols-4 gap-3">
+                      {previews.map((preview, index) => (
+                        <div key={index} className="relative group">
+                          <div className="aspect-square rounded-lg overflow-hidden border border-gray-200">
+                            <img
+                              src={preview}
+                              alt={`Preview ${index + 1}`}
+                              className="w-full h-full object-cover"
+                            />
+                          </div>
+                          <button
+                            onClick={() => removeFile(index)}
+                            className="absolute -top-2 -right-2 w-5 h-5 bg-red-500 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200 hover:bg-red-600 text-xs"
+                          >
+                            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
               <button 
                 type="submit"
