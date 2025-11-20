@@ -163,7 +163,33 @@ body {
 .bg-brand { background: var(--brand) }
 .bg-brand-dark { background: var(--brand-dark) }
 .bg-accent { background: var(--accent) }
-.glass { backdrop-filter: saturate(180%) blur(18px); background: rgba(2,27,79,.8) }
+.glass { 
+  backdrop-filter: saturate(180%) blur(18px); 
+  background: rgba(2,27,79,.8);
+  -webkit-backdrop-filter: saturate(180%) blur(18px); /* Safari support */
+}
+
+@supports not (backdrop-filter: saturate(180%) blur(18px)) {
+  .glass {
+    background: rgba(2,27,79,.95); /* Fallback for browsers without backdrop-filter support */
+  }
+}
+
+/* Ensure smooth scrolling works properly */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Prevent horizontal overflow */
+body {
+  overflow-x: hidden;
+}
+
+/* Ensure fixed header doesn't cover content */
+main > section:first-child,
+main > div:first-child {
+  scroll-margin-top: 50px;
+}
 .shadow-soft { box-shadow: 0 20px 40px rgba(5,22,55,.2) }
 .hero-mask {
   background: radial-gradient(circle at 25% 20%,rgba(255,255,255,.08),transparent 55%),

@@ -8,15 +8,22 @@ export default function Navigation() {
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
     if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
+      const headerOffset = 100; // Tinggi header + margin
+      const elementPosition = element.getBoundingClientRect().top;
+      const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+      
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: 'smooth'
+      });
     }
     setIsMenuOpen(false);
   };
 
   return (
     <header className="fixed inset-x-0 top-0 z-50">
-      <div className="mx-auto max-w-6xl px-4">
-        <div className="mt-4 flex items-center justify-between rounded-2xl glass text-white border border-white/20 px-5 py-3">
+      <div className="mx-auto max-w-6xl px-4 pt-4">
+        <div className="flex items-center justify-between rounded-2xl glass text-white border border-white/20 px-5 py-3 backdrop-blur-lg">
           <button 
             onClick={() => scrollToSection('hero')} 
             className="flex items-center gap-3"
@@ -76,7 +83,7 @@ export default function Navigation() {
         </div>
         
         {isMenuOpen && (
-          <div className="md:hidden mt-2 rounded-2xl glass border border-white/20 px-5 py-4 text-white text-sm">
+          <div className="md:hidden mt-2 mb-4 rounded-2xl glass border border-white/20 px-5 py-4 text-white text-sm">
             <nav className="grid gap-3">
               <button onClick={() => scrollToSection('about')}>About us</button>
               <button onClick={() => scrollToSection('projects')}>Projects</button>
