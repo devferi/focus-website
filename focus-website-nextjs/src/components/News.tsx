@@ -4,8 +4,8 @@ export default function News() {
       <div className="mx-auto max-w-6xl px-4">
         <div className="flex items-end justify-between gap-4 flex-wrap">
           <div>
-            <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight">Update & Berita</h2>
-            <p className="mt-3 text-slate-600">Artikel terbaru dari focustradingcontractor.com.</p>
+            <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight">Updates & News</h2>
+            <p className="mt-3 text-slate-600">Latest articles and insights from our team.</p>
           </div>
           <a 
             href="https://focustradingcontractor.com/" 

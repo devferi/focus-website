@@ -86,7 +86,7 @@ export default function Services() {
               Rangkaian layanan menyeluruh dari konseptual hingga maintenance.
             </h2>
           </div>
-          <a href="#contact" className="text-sm font-semibold text-brand hover:text-accent transition-colors">
+          <a href="https://focustradingcontractor.com/wp-content/uploads/2020/06/Company-Profile-Cv.-Focus-Trading-Contractor-2020.pdf" className="text-sm font-semibold text-brand hover:text-accent transition-colors">
             Unduh Company Profile →
           </a>
         </div>

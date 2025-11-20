@@ -6,7 +6,7 @@ const projects = [
   {
     id: 1,
     title: "Hotel & Resort Kaliandra – Pandaan",
-    sector: "Infrastructure",
+    sector: "Infrastructure Project",
     location: "Pandaan",
     status: "Featured",
     image: "https://images.unsplash.com/photo-1505691938895-1758d7feb511?auto=format&fit=crop&w=1600&q=80",
@@ -16,7 +16,7 @@ const projects = [
   {
     id: 2,
     title: "Infrastruktur PEMKOT Surabaya",
-    sector: "Infrastructure",
+    sector: "Infrastructure Project",
     location: "Surabaya",
     status: "Featured",
     image: "https://images.unsplash.com/photo-1470246973918-29a93221c455?auto=format&fit=crop&w=1600&q=80",
@@ -26,7 +26,7 @@ const projects = [
   {
     id: 3,
     title: "Ballroom Ciputra World Surabaya",
-    sector: "Finishing",
+    sector: "Finishing Contractor",
     location: "Surabaya",
     status: "Featured",
     image: "https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=1600&q=80",
@@ -36,7 +36,7 @@ const projects = [
   {
     id: 4,
     title: "Ruang Musik NSC – Surabaya",
-    sector: "Acoustic",
+    sector: "Acoustic Project",
     location: "Surabaya",
     status: "Featured",
     image: "https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=1600&q=80",
@@ -46,22 +46,22 @@ const projects = [
   {
     id: 5,
     title: "Meeting Room & Lobby PT. Hertz Flavors",
-    sector: "DesignBuild",
+    sector: "Design and Build",
     location: "Mojokerto",
     status: "Featured",
     image: "https://images.unsplash.com/photo-1520607162513-77705c0f0d4a?auto=format&fit=crop&w=1600&q=80",
     description: "Pembenahan meeting room, office staff, dan lobby di Ngoro – Mojokerto.",
-    badge: "Design & Build"
+    badge: "Design and Build"
   },
   {
     id: 6,
     title: "Director Room PT. Hertz Flavors",
-    sector: "Interior",
+    sector: "Acoustic Project",
     location: "Mojokerto",
     status: "Featured",
     image: "https://images.unsplash.com/photo-1484154218962-a197022b5858?auto=format&fit=crop&w=1600&q=80",
     description: "Penataan ruang direktur dengan kebutuhan akustik dan finishing khusus.",
-    badge: "Interior & Acoustic"
+    badge: "Acoustic Project"
   }
 ];
 
@@ -83,10 +83,10 @@ export default function Projects() {
           <div>
             <p className="text-sm font-semibold tracking-[0.3em] text-white/60 uppercase">Featured Work</p>
             <h2 className="mt-3 text-3xl md:text-4xl font-bold">
-              Portofolio pilihan dari focustradingcontractor.com
+              Our Signature Projects That Define Excellence
             </h2>
             <p className="mt-2 text-white/70 max-w-2xl">
-              Susunan proyek Design & Build, Finishing, Infrastruktur, dan Acoustic sebagaimana ditampilkan di situs resmi.
+              A curated collection of our finest work spanning Design & Build, Finishing, Infrastructure, and Acoustic—showcasing the precision, creativity, and dedication that define our craftsmanship.
             </p>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 text-xs filter-grid w-full">
@@ -96,12 +96,10 @@ export default function Projects() {
               className="rounded-2xl border border-white/20 bg-transparent px-4 py-2 focus:border-accent focus:ring-0 w-full"
             >
               <option value="">Jenis pekerjaan</option>
-              <option>DesignBuild</option>
-              <option>Finishing</option>
-              <option>Infrastructure</option>
-              <option>Acoustic</option>
-              <option>Interior</option>
-              <option>MEP</option>
+              <option>Design and Build</option>
+              <option>Finishing Contractor</option>
+              <option>Infrastructure Project</option>
+              <option>Acoustic Project</option>
             </select>
             <select 
               value={locationFilter} 

@@ -56,7 +56,6 @@ export default function Navigation() {
           </nav>
           
           <div className="hidden md:flex items-center gap-3">
-            <a href="tel:+62318765432" className="text-xs text-white/70">+62 318 765 432</a>
             <button 
               onClick={() => scrollToSection('contact')} 
               className="inline-flex items-center gap-2 rounded-xl bg-accent px-4 py-2 text-sm font-semibold text-white shadow-soft hover:opacity-90"
