@@ -6,7 +6,7 @@ const featuredProjects = [
   {
     id: 1,
     title: "Kaliandra Resort — Pandaan",
-    location: "Design and Build • Pandaan",
+    scope: "Design and Build",
     description: "Pekerjaan infrastruktur menyeluruh untuk kawasan resort",
     image: "https://cdn.rri.co.id/berita/Malang/o/1714714653918-WhatsApp_Image_2024-05-03_at_12.04.33/poe9mvbz2386oy7.jpeg",
     size: "> 15.000 m²"
@@ -14,7 +14,7 @@ const featuredProjects = [
   {
     id: 2,
     title: "Konstruksi Baja",
-    location: "Design and Build • Gempol",
+    scope: "Design and Build",
     description: "Pekerjaan struktur baja untuk fasilitas industri",
     image: "https://mandorpro.id/wp-content/uploads/2024/07/harga-borongan-baja-1.webp",
     size: "± 5.000 m²"
@@ -22,7 +22,7 @@ const featuredProjects = [
   {
     id: 3,
     title: "Proyek PEMKOT Surabaya",
-    location: "Infrastructure • Surabaya",
+    scope: "Infrastructure",
     description: "Paket pekerjaan infrastruktur untuk Pemerintah Kota Surabaya",
     image: "https://asiacon.co.id/wp-content/uploads/2024/12/Efisiensi-Biaya-dengan-Menggunakan-U-Ditch-Beton-dalam-Proyek-Konstruksi-1_11zon-1.jpg",
     size: "± 12.000 m²"
@@ -30,7 +30,7 @@ const featuredProjects = [
   {
     id: 4,
     title: "Icon Mall Gresik",
-    location: "Finishing • Gresik",
+    scope: "Finishing",
     description: "Pekerjaan finishing area komersial pusat perbelanjaan",
     image: "https://www.rumah123.com/seo-cms/assets/large_Perpaduan_Konsep_Natural_dan_Futuristik_285437ee5c/large_Perpaduan_Konsep_Natural_dan_Futuristik_285437ee5c.png",
     size: "± 8.000 m²"
@@ -38,7 +38,7 @@ const featuredProjects = [
   {
     id: 5,
     title: "PT. Hertz Flavors Makmur Indonesia",
-    location: "Design & Build • Acoustic Installation • Finishing ",
+    scope: "Design & Build • Acoustic Installation • Finishing",
     description: "Pekerjaan rancang bangun fasilitas kantor",
     image: "https://tobaccoreporter.com/wp-content/uploads/2023/11/OUTSIDE-FACTORY.jpg",
     size: "± 6.000 m²"
@@ -147,7 +147,7 @@ export default function Hero() {
                       />
                       <div className="mt-4 space-y-2">
                         <div className="flex items-center justify-between">
-                          <span className="text-xs uppercase tracking-[0.2em] text-white/60">{project.location}</span>
+                          <span className="text-xs uppercase tracking-[0.2em] text-white/60">{project.scope}</span>
                         </div>
                         <h3 className="text-white font-semibold text-lg">{project.title}</h3>
                         <p className="text-white/70 text-sm">{project.description}</p>
