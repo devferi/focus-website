@@ -22,40 +22,26 @@ export default function About() {
                 <p className="mt-2 text-lg font-semibold">2015 • Design and Build, Acoustic Installation,  Finishing and Infrastructure</p>
               </div>
             </div>
-            <p className="mt-8 text-sm font-semibold uppercase tracking-[0.35em] text-slate-500">Mission</p>
-            <ul className="mt-4 space-y-3 text-sm text-slate-600">
-              <li className="flex items-start gap-3">
-                <span className="mt-1 h-2 w-2 rounded-full bg-brand"></span>
-                <span>Memberikan pelayanan, mutu, dan kepuasan terbaik untuk setiap mitra.</span>
-              </li>
-              <li className="flex items-start gap-3">
-                <span className="mt-1 h-2 w-2 rounded-full bg-accent"></span>
-                <span>Membangun serta menciptakan citra terbaik perusahaan.</span>
-              </li>
-              <li className="flex items-start gap-3">
-                <span className="mt-1 h-2 w-2 rounded-full bg-brand"></span>
-                <span>Selalu berinovasi, kreatif, dan konsisten dalam memberikan pelayanan.</span>
-              </li>
-              <li className="flex items-start gap-3">
-                <span className="mt-1 h-2 w-2 rounded-full bg-accent"></span>
-                <span>Menciptakan lapangan kerja serta berkontribusi untuk pembangunan konstruksi nasional.</span>
-              </li>
-            </ul>
           </div>
           <div className="rounded-[32px] bg-brand-dark text-white p-8 shadow-soft relative overflow-hidden">
             <div className="absolute inset-0 opacity-30" style={{background: 'radial-gradient(circle at 80% 20%,rgba(255,189,0,.5),transparent 60%)'}}></div>
             <div className="relative">
-              <p className="text-sm uppercase tracking-[0.3em] text-white/70">Vision & Motto</p>
+              <p className="text-sm uppercase tracking-[0.3em] text-white/70">Vision & Misiion</p>
               <div className="mt-6 space-y-6 text-white/80">
                 <div>
-                  <p className="text-xs uppercase tracking-[0.4em] text-white/60">Vision</p>
+                  <p className="text-xs uppercase tracking-[0.4em] text-white/60">VISION</p>
                   <p className="mt-2 text-base text-white">
-                    Menjadi perusahaan jasa yang bergerak di bidang Design and Build, Acoustic Installation, Finishing & Infrastructure yang kompetitif, berkualitas, dan selalu berusaha memberikan pelayanan terbaik.
+                    Menjadi perusahaan jasa pekerjaan design & build , interior , infrastruktur dan pekerjaan acoustic peredaman suara yang kompetitif, berkualitas dan selalu berusaha memberikan pelayanan yang terbaik
                   </p>
                 </div>
                 <div>
-                  <p className="text-xs uppercase tracking-[0.4em] text-white/60">Tagline</p>
-                  <p className="mt-2 text-base text-white">From idea, plan to final solution.</p>
+                  <p className="text-xs uppercase tracking-[0.4em] text-white/60">MISSION</p>
+                  <ul className="mt-2 space-y-2 text-base text-white list-disc list-inside">
+                    <li>Memberikan pelayanan, mutu, dan kepuasan terbaik untuk setiap mitra</li>
+                    <li>Membangun serta menciptakan citra terbaik perusahaan</li>
+                    <li>Selalu berinovasi, kreatif dan konsisten dalam memberikan pelayanan</li>
+                    <li>Menciptakan lapangan kerja kepada masyarakat dan membantu dalam pembangunan konstruksi nasional.</li>
+                  </ul>
                 </div>
               </div>
               <div className="mt-10 rounded-2xl border border-white/20 p-5 text-sm text-white/80">

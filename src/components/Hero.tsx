@@ -6,15 +6,15 @@ const featuredProjects = [
   {
     id: 1,
     title: "Kaliandra Resort — Pandaan",
-    location: "Infrastructure • Pandaan",
+    location: "Design and Build • Pandaan",
     description: "Pekerjaan infrastruktur menyeluruh untuk kawasan resort",
     image: "https://cdn.rri.co.id/berita/Malang/o/1714714653918-WhatsApp_Image_2024-05-03_at_12.04.33/poe9mvbz2386oy7.jpeg",
     size: "> 15.000 m²"
   },
   {
     id: 2,
-    title: "Konstruksi Baja — Gempol",
-    location: "Infrastructure • Gempol",
+    title: "Konstruksi Baja",
+    location: "Design and Build • Gempol",
     description: "Pekerjaan struktur baja untuk fasilitas industri",
     image: "https://mandorpro.id/wp-content/uploads/2024/07/harga-borongan-baja-1.webp",
     size: "± 5.000 m²"
@@ -38,7 +38,7 @@ const featuredProjects = [
   {
     id: 5,
     title: "PT. Hertz Flavors Makmur Indonesia",
-    location: "Design & Build • Surabaya",
+    location: "Design & Build • Acoustic Installation • Finishing ",
     description: "Pekerjaan rancang bangun fasilitas kantor",
     image: "https://tobaccoreporter.com/wp-content/uploads/2023/11/OUTSIDE-FACTORY.jpg",
     size: "± 6.000 m²"

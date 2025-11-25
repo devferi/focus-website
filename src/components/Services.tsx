@@ -29,37 +29,7 @@ export default function Services() {
     },
     {
       id: 2,
-      title: "Finishing Contractor",
-      description: "Pelayanan menyeluruh dengan motto 'Totally Work' agar bangunan impian terwujud sesuai mutu finishing yang disepakati.",
-      icon: (
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" fill="none" stroke="currentColor" strokeWidth="2">
-          <path d="M10 30h28v8a2 2 0 0 1-2 2H12a2 2 0 0 1-2-2v-8z" fill="rgba(255,255,255,.18)"></path>
-          <path d="M14 26h20v4H14z" fill="rgba(255,255,255,.25)"></path>
-          <path d="M18 22h12v4H18z" fill="rgba(255,255,255,.35)"></path>
-          <path d="M17 18c0-3.866 3.582-7 8-7s8 3.134 8 7v4H17v-4z" fill="rgba(255,255,255,.2)"></path>
-          <path d="M12 38h24M24 11v27" strokeLinecap="round"></path>
-        </svg>
-      ),
-      color: "#ffbd00",
-    },
-    {
-      id: 3,
-      title: "Infrastructure Project",
-      description: "Penyedia jasa pekerjaan infrastruktur dari awal hingga akhir, dipercaya pada proyek hotel, pemerintahan, dan fasilitas komersial.",
-      icon: (
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" fill="none" stroke="currentColor" strokeWidth="2">
-          <path d="M6 36h36v4H6z" fill="rgba(255,255,255,.2)"></path>
-          <path d="M14 20h8v16h-8zM26 16h8v20h-8z" fill="rgba(255,255,255,.25)"></path>
-          <path d="M6 20h8m14-4h8M6 24h8m14-4h8" strokeLinecap="round"></path>
-          <path d="M10 14l14-8 14 8" strokeLinecap="round"></path>
-          <path d="M24 6v4" strokeLinecap="round"></path>
-        </svg>
-      ),
-      color: "#ffbd00",
-    },
-    {
-      id: 4,
-      title: "Acoustic Project",
+      title: "Acoustic Installation",
       description: "Instalasi peredam untuk ruang meeting, soundroom, hingga private room demi kenyamanan dan fokus pengguna.",
       icon: (
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" fill="none" stroke="currentColor" strokeWidth="2">
@@ -72,7 +42,37 @@ export default function Services() {
           <circle cx="24" cy="24" r="4" fill="rgba(255,255,255,.3)"></circle>
         </svg>
       ),
+      color: "#ffbd00",
+    },
+    {
+      id: 3,
+      title: "Finishing Contractor",
+      description: "Pelayanan menyeluruh dengan motto 'Totally Work' agar bangunan impian terwujud sesuai mutu finishing yang disepakati.",
+      icon: (
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" fill="none" stroke="currentColor" strokeWidth="2">
+          <path d="M10 30h28v8a2 2 0 0 1-2 2H12a2 2 0 0 1-2-2v-8z" fill="rgba(255,255,255,.18)"></path>
+          <path d="M14 26h20v4H14z" fill="rgba(255,255,255,.25)"></path>
+          <path d="M18 22h12v4H18z" fill="rgba(255,255,255,.35)"></path>
+          <path d="M17 18c0-3.866 3.582-7 8-7s8 3.134 8 7v4H17v-4z" fill="rgba(255,255,255,.2)"></path>
+          <path d="M12 38h24M24 11v27" strokeLinecap="round"></path>
+        </svg>
+      ),
       color: "#043796",
+    },
+    {
+      id: 4,
+      title: "Infrastructure Project",
+      description: "Penyedia jasa pekerjaan infrastruktur dari awal hingga akhir, dipercaya pada proyek hotel, pemerintahan, dan fasilitas komersial.",
+      icon: (
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" fill="none" stroke="currentColor" strokeWidth="2">
+          <path d="M6 36h36v4H6z" fill="rgba(255,255,255,.2)"></path>
+          <path d="M14 20h8v16h-8zM26 16h8v20h-8z" fill="rgba(255,255,255,.25)"></path>
+          <path d="M6 20h8m14-4h8M6 24h8m14-4h8" strokeLinecap="round"></path>
+          <path d="M10 14l14-8 14 8" strokeLinecap="round"></path>
+          <path d="M24 6v4" strokeLinecap="round"></path>
+        </svg>
+      ),
+      color: "#ffbd00",
     }
   ];
 
