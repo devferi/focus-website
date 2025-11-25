@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Facebook, Globe, Instagram, Youtube, Linkedin } from 'lucide-react';
+import { Facebook, Globe, Instagram, Youtube, Linkedin, FileDown } from 'lucide-react';
 
 function WhatsAppIcon({ className = "w-4 h-4" }: { className?: string }) {
   return (
@@ -20,6 +20,21 @@ function WhatsAppIcon({ className = "w-4 h-4" }: { className?: string }) {
 export default function Contact() {
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [previews, setPreviews] = useState<string[]>([]);
+  const [cpName, setCpName] = useState('');
+  const [cpPhone, setCpPhone] = useState('');
+  const [cpDomisili, setCpDomisili] = useState('');
+  const pdfUrl = "https://focustradingcontractor.com/wp-content/uploads/2020/06/Company-Profile-Cv.-Focus-Trading-Contractor-2020.pdf";
+
+  const phoneDigits = cpPhone.replace(/\D/g, '');
+  const canDownload = cpName.trim().length >= 2 && phoneDigits.length >= 10 && cpDomisili.trim().length >= 2;
+
+  const handleDownloadProfile = () => {
+    if (!canDownload) {
+      alert('Mohon lengkapi Nama, Nomor HP, dan Domisili untuk mengunduh Company Profile.');
+      return;
+    }
+    window.open(pdfUrl, '_blank');
+  };
 
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(event.target.files || []);
@@ -253,6 +268,62 @@ export default function Contact() {
                 Kirim Permintaan
               </button>
             </form>
+          </div>
+        </div>
+
+        {/* Unduh Company Profile */}
+        <div className="mt-8 rounded-3xl border border-white/20 bg-white/5 p-6">
+          <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6">
+            <div>
+              <p className="text-sm font-semibold tracking-[0.3em] text-white/60 uppercase">Unduh Company Profile</p>
+              <p className="mt-2 text-white/80 text-sm">Isi data singkat di bawah ini untuk mengunduh dokumen resmi perusahaan.</p>
+            </div>
+            <div className="w-full lg:w-auto grid sm:grid-cols-3 gap-3">
+              <input
+                type="text"
+                className="w-full rounded-2xl border border-white/20 bg-white/10 px-4 py-3 text-white placeholder-white/60 focus:outline-none focus:ring-1 focus:ring-white/50"
+                placeholder="Nama"
+                value={cpName}
+                onChange={(e) => setCpName(e.target.value)}
+              />
+              <input
+                type="tel"
+                className="w-full rounded-2xl border border-white/20 bg-white/10 px-4 py-3 text-white placeholder-white/60 focus:outline-none focus:ring-1 focus:ring-white/50"
+                placeholder="Nomor HP"
+                value={cpPhone}
+                onChange={(e) => setCpPhone(e.target.value)}
+              />
+              <input
+                type="text"
+                className="w-full rounded-2xl border border-white/20 bg-white/10 px-4 py-3 text-white placeholder-white/60 focus:outline-none focus:ring-1 focus:ring-white/50"
+                placeholder="Domisili"
+                value={cpDomisili}
+                onChange={(e) => setCpDomisili(e.target.value)}
+              />
+            </div>
+          </div>
+          <div className="mt-4 flex items-center justify-between">
+            <p className="text-xs text-white/60">Data Anda hanya digunakan untuk keperluan tindak lanjut dan arsip internal.</p>
+            {canDownload ? (
+              <a
+                href={pdfUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center gap-2 rounded-xl bg-accent px-4 py-2 text-sm font-semibold text-white shadow-soft hover:opacity-90"
+              >
+                <FileDown className="w-4 h-4" />
+                Unduh PDF
+              </a>
+            ) : (
+              <button
+                onClick={handleDownloadProfile}
+                disabled
+                className="inline-flex items-center gap-2 rounded-xl bg-white/10 px-4 py-2 text-sm font-semibold text-white/60 shadow-soft cursor-not-allowed"
+              >
+                <FileDown className="w-4 h-4" />
+                Unduh PDF
+              </button>
+            )}
           </div>
         </div>
       </div>

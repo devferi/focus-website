@@ -79,16 +79,15 @@ export default function Services() {
   return (
     <section id="services" className="py-20 bg-slate-50 overflow-hidden">
       <div className="mx-auto max-w-6xl px-4">
-        <div className={`flex flex-wrap items-end justify-between gap-6 transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+        <div className={`space-y-6 transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
           <div>
             <p className="text-sm font-semibold tracking-[0.3em] text-slate-500 uppercase">Layanan</p>
             <h2 className="mt-3 text-3xl md:text-4xl font-bold text-slate-900">
               Rangkaian layanan menyeluruh dari konseptual hingga maintenance.
             </h2>
           </div>
-          <a href="https://focustradingcontractor.com/wp-content/uploads/2020/06/Company-Profile-Cv.-Focus-Trading-Contractor-2020.pdf" className="text-sm font-semibold text-brand hover:text-accent transition-colors">
-            Unduh Company Profile →
-          </a>
+
+          
         </div>
 
         <div className="mt-10 grid md:grid-cols-2 gap-6">
