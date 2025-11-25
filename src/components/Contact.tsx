@@ -1,6 +1,21 @@
 'use client';
 
 import { useState } from 'react';
+import { Facebook, Globe, Instagram, Youtube, Linkedin } from 'lucide-react';
+
+function WhatsAppIcon({ className = "w-4 h-4" }: { className?: string }) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 32 32"
+      className={className}
+      aria-hidden="true"
+      fill="currentColor"
+    >
+      <path d="M16.001 3.2c-7.06 0-12.8 5.74-12.8 12.8 0 2.26.6 4.47 1.74 6.41L3.2 28.8l6.61-1.72A12.74 12.74 0 0 0 16 28.8c7.06 0 12.8-5.74 12.8-12.8s-5.74-12.8-12.799-12.8zm0 23.04c-2.01 0-3.98-.53-5.7-1.54l-.41-.24-3.93 1.02 1.05-3.83-.27-.39A10.57 10.57 0 0 1 5.44 16c0-5.83 4.73-10.56 10.56-10.56 5.83 0 10.56 4.73 10.56 10.56 0 5.83-4.73 10.56-10.56 10.56zm5.81-7.97c-.32-.16-1.89-.93-2.18-1.04-.29-.11-.5-.16-.71.16-.21.32-.82 1.04-1.01 1.25-.19.21-.37.24-.69.08-.32-.16-1.36-.5-2.59-1.6-.96-.85-1.61-1.89-1.8-2.21-.19-.32-.02-.49.14-.65.14-.14.32-.37.48-.56.16-.19.21-.32.32-.53.11-.21.05-.4-.03-.56-.08-.16-.71-1.71-.97-2.34-.26-.62-.53-.54-.71-.55-.18-.01-.39-.01-.6-.01-.21 0-.56.08-.85.4-.29.32-1.12 1.09-1.12 2.65 0 1.56 1.15 3.07 1.31 3.29.16.21 2.27 3.47 5.51 4.73.77.3 1.37.48 1.84.61.77.2 1.47.17 2.02.1.62-.09 1.89-.77 2.16-1.51.27-.74.27-1.37.19-1.51-.08-.14-.29-.21-.61-.37z" />
+    </svg>
+  );
+}
 
 export default function Contact() {
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
@@ -61,16 +76,41 @@ export default function Contact() {
             </p>
             <div className="mt-6 rounded-3xl border border-white/20 bg-white/5 p-6 text-sm">
               <p className="font-semibold text-lg">CV. Focus Trading Contractor</p>
-              <p className="text-white/70 mt-2">Design and Build, Finishing Contractor & Acoustic Installation sejak 2013.</p>
+              <p className="text-white/70 mt-2">Design and Build, Acoustic Installation, Finishing & Infrastructure sejak 2011.</p>
               <div className="mt-4 space-y-2">
-                <a href="https://wa.me/6281229750999" target="_blank" className="flex items-center gap-2 text-white/80" rel="noreferrer">
-                  <span className="text-accent">WA</span> +62 812-2975-0999
+                <a href="https://wa.me/6281229750999" target="_blank" className="flex items-center gap-3 text-white/90 hover:text-white" rel="noreferrer">
+                  <span className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-white/10 text-white border border-white/20">
+                    <WhatsAppIcon className="w-6 h-6" />
+                  </span>
+                  <span className="font-medium">+62 812-2975-0999</span>
                 </a>
-                <a href="https://www.facebook.com/focustradingcontractor/" target="_blank" className="flex items-center gap-2 text-white/80" rel="noreferrer">
-                  <span className="text-accent">FB</span> Focus Trading Contractor
+
+                <a href="https://www.instagram.com/focustrad/" target="_blank" className="flex items-center gap-3 text-white/90 hover:text-white" rel="noreferrer">
+                  <span className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-white/10 text-white border border-white/20">
+                    <Instagram className="w-6 h-6" />
+                  </span>
+                  <span className="font-medium">@focustrad</span>
                 </a>
-                <a href="https://focustradingcontractor.com/" target="_blank" className="flex items-center gap-2 text-white/80" rel="noreferrer">
-                  <span className="text-accent">WEB</span> focustradingcontractor.com
+
+                <a href="https://www.facebook.com/focustradingcontractor/?__tn__=%2Cd%2CP-R&eid=ARAoKUaqwuZRDHskxxvMly9HaPdvKKgJSm3ITDn2EyGBxT-h6XB7yUnt90ee6wLxW9tZpim3n-nHt8Lq" target="_blank" className="flex items-center gap-3 text-white/90 hover:text-white" rel="noreferrer">
+                  <span className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-white/10 text-white border border-white/20">
+                    <Facebook className="w-6 h-6" />
+                  </span>
+                  <span className="font-medium">Focus Trading Contractor</span>
+                </a>
+
+                <a href="https://www.youtube.com/watch?v=9avT5NN0cmk" target="_blank" className="flex items-center gap-3 text-white/90 hover:text-white" rel="noreferrer">
+                  <span className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-white/10 text-white border border-white/20">
+                    <Youtube className="w-6 h-6" />
+                  </span>
+                  <span className="font-medium">Company Profile</span>
+                </a>
+
+                <a href="https://id.linkedin.com/in/focus-trading-contractor-cv-854991103" target="_blank" className="flex items-center gap-3 text-white/90 hover:text-white" rel="noreferrer">
+                  <span className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-white/10 text-white border border-white/20">
+                    <Linkedin className="w-6 h-6" />
+                  </span>
+                  <span className="font-medium">LinkedIn Profile</span>
                 </a>
               </div>
             </div>

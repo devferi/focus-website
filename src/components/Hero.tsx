@@ -5,27 +5,43 @@ import { useState, useEffect } from 'react';
 const featuredProjects = [
   {
     id: 1,
-    title: "Hotel & Resort Kaliandra – Pandaan",
+    title: "Kaliandra Resort — Pandaan",
     location: "Infrastructure • Pandaan",
-    description: "Pekerjaan infrastruktur menyeluruh untuk kawasan hotel & resort bintang 5",
-    image: "https://images.unsplash.com/photo-1505691938895-1758d7feb511?auto=format&fit=crop&w=1600&q=80",
+    description: "Pekerjaan infrastruktur menyeluruh untuk kawasan resort",
+    image: "https://cdn.rri.co.id/berita/Malang/o/1714714653918-WhatsApp_Image_2024-05-03_at_12.04.33/poe9mvbz2386oy7.jpeg",
     size: "> 15.000 m²"
   },
   {
     id: 2,
-    title: "Ballroom Ciputra World Surabaya",
-    location: "Finishing • Surabaya",
-    description: "Pekerjaan finishing ballroom dengan standar venue premium internasional",
-    image: "https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=1600&q=80",
-    size: "8.500 m²"
+    title: "Konstruksi Baja — Gempol",
+    location: "Infrastructure • Gempol",
+    description: "Pekerjaan struktur baja untuk fasilitas industri",
+    image: "https://mandorpro.id/wp-content/uploads/2024/07/harga-borongan-baja-1.webp",
+    size: "± 5.000 m²"
   },
   {
     id: 3,
-    title: "Infrastruktur PEMKOT Surabaya",
+    title: "Proyek PEMKOT Surabaya",
     location: "Infrastructure • Surabaya",
     description: "Paket pekerjaan infrastruktur untuk Pemerintah Kota Surabaya",
-    image: "https://images.unsplash.com/photo-1470246973918-29a93221c455?auto=format&fit=crop&w=1600&q=80",
-    size: "12.000 m²"
+    image: "https://asiacon.co.id/wp-content/uploads/2024/12/Efisiensi-Biaya-dengan-Menggunakan-U-Ditch-Beton-dalam-Proyek-Konstruksi-1_11zon-1.jpg",
+    size: "± 12.000 m²"
+  },
+  {
+    id: 4,
+    title: "Icon Mall Gresik",
+    location: "Finishing • Gresik",
+    description: "Pekerjaan finishing area komersial pusat perbelanjaan",
+    image: "https://www.rumah123.com/seo-cms/assets/large_Perpaduan_Konsep_Natural_dan_Futuristik_285437ee5c/large_Perpaduan_Konsep_Natural_dan_Futuristik_285437ee5c.png",
+    size: "± 8.000 m²"
+  },
+  {
+    id: 5,
+    title: "PT. Hertz Flavors Makmur Indonesia",
+    location: "Design & Build • Surabaya",
+    description: "Pekerjaan rancang bangun fasilitas kantor",
+    image: "https://tobaccoreporter.com/wp-content/uploads/2023/11/OUTSIDE-FACTORY.jpg",
+    size: "± 6.000 m²"
   }
 ];
 
@@ -67,7 +83,7 @@ export default function Hero() {
               Fast and reliable service for your project or a quick fix, we do it all.
             </h1>
             <p className="mt-4 text-lg text-white/80 max-w-xl">
-              Perusahaan Design & Build, Finishing Contractor, dan Acoustic Installation yang fokus pada hasil terbaik untuk setiap kolaborasi.
+              Perusahaan jasa yang bergerak di bidang Design and Build, Acoustic Installation, Finishing & Infrastructure yang fokus pada hasil terbaik untuk setiap kolaborasi.
             </p>
             <div className="mt-8 flex flex-wrap items-center gap-4 hero-cta">
               <a href="#contact" className="rounded-2xl bg-accent px-6 py-3 text-sm font-semibold text-white shadow-soft">

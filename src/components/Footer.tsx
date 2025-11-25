@@ -16,7 +16,7 @@ export default function Footer() {
         <div className="flex flex-wrap items-center justify-between gap-6 border-b border-white/10 py-8">
           <div>
             <p className="text-sm uppercase tracking-[0.3em] text-white/50">Focus Trading Contractor</p>
-            <p className="mt-2 text-white text-lg font-semibold">Design & Build • Fit-Out • Acoustic</p>
+            <p className="mt-2 text-white text-lg font-semibold">Design & Build • Acoustic Installation • Finishing & Infrastructure</p>
           </div>
           <div className="flex gap-4 text-sm">
             <a href="#services" className="hover:text-white">Layanan</a>

@@ -7,7 +7,7 @@ export default function About() {
             <p className="text-sm font-semibold tracking-[0.3em] text-slate-500 uppercase">Our Profile</p>
             <h2 className="mt-3 text-3xl md:text-4xl font-bold text-slate-900">CV. Focus Trading Contractor</h2>
             <p className="mt-4 text-slate-600">
-              CV. Focus Trading Contractor adalah perusahaan Design and Build, Finishing Contractor & Acoustic Installation yang didirikan pada tahun 2013. Dalam menjalin komitmen dengan klien, kami selalu menempatkan mutu hasil sebagai prinsip dasar.
+              CV. Focus Trading Contractor adalah perusahaan jasa yang bergerak di bidang Design and Build, Acoustic Installation, Finishing & Infrastructure yang didirikan pada tahun 2011. Dalam menjalin komitmen dengan klien, kami selalu menempatkan mutu hasil sebagai prinsip dasar.
             </p>
             <p className="mt-4 text-slate-600">
               Perusahaan kami memulai langkah sebagai subcontractor interior, kemudian pada 2015 berkembang ke bidang design & build serta pekerjaan infrastruktur untuk memenuhi kebutuhan konsumen yang menuntut mutu dan kecepatan pelaksanaan.
@@ -15,11 +15,11 @@ export default function About() {
             <div className="mt-6 grid sm:grid-cols-2 gap-4">
               <div className="rounded-2xl border border-slate-200 p-5">
                 <p className="text-xs uppercase tracking-widest text-slate-500">Sejak</p>
-                <p className="mt-2 text-lg font-semibold">2013 • Design & Build, Finishing, Acoustic</p>
+                <p className="mt-2 text-lg font-semibold">2011 • Finishing Contractor & Acoustic Installation</p>
               </div>
               <div className="rounded-2xl border border-slate-200 p-5">
                 <p className="text-xs uppercase tracking-widest text-slate-500">Pengembangan</p>
-                <p className="mt-2 text-lg font-semibold">2015 • Infrastruktur & layanan menyeluruh</p>
+                <p className="mt-2 text-lg font-semibold">2015 • Design and Build, Acoustic Installation,  Finishing and Infrastructure</p>
               </div>
             </div>
             <p className="mt-8 text-sm font-semibold uppercase tracking-[0.35em] text-slate-500">Mission</p>
@@ -50,7 +50,7 @@ export default function About() {
                 <div>
                   <p className="text-xs uppercase tracking-[0.4em] text-white/60">Vision</p>
                   <p className="mt-2 text-base text-white">
-                    Menjadi perusahaan jasa design & build, interior, infrastruktur, dan acoustic yang kompetitif, berkualitas, dan selalu berusaha memberikan pelayanan terbaik.
+                    Menjadi perusahaan jasa yang bergerak di bidang Design and Build, Acoustic Installation, Finishing & Infrastructure yang kompetitif, berkualitas, dan selalu berusaha memberikan pelayanan terbaik.
                   </p>
                 </div>
                 <div>
