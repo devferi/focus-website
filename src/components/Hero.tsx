@@ -1,75 +1,102 @@
 'use client';
 
+import Image from 'next/image';
 import { useState, useEffect } from 'react';
 
-const featuredProjects = [
-  {
-    id: 1,
-    title: "Kaliandra Resort — Pandaan",
-    scope: "Design and Build",
-    description: "Pekerjaan infrastruktur menyeluruh untuk kawasan resort",
-    image: "https://cdn.rri.co.id/berita/Malang/o/1714714653918-WhatsApp_Image_2024-05-03_at_12.04.33/poe9mvbz2386oy7.jpeg",
-    size: "> 15.000 m²"
-  },
-  {
-    id: 2,
-    title: "Konstruksi Baja",
-    scope: "Design and Build",
-    description: "Pekerjaan struktur baja untuk fasilitas industri",
-    image: "https://mandorpro.id/wp-content/uploads/2024/07/harga-borongan-baja-1.webp",
-    size: "± 5.000 m²"
-  },
-  {
-    id: 3,
-    title: "Proyek PEMKOT Surabaya",
-    scope: "Infrastructure",
-    description: "Paket pekerjaan infrastruktur untuk Pemerintah Kota Surabaya",
-    image: "https://asiacon.co.id/wp-content/uploads/2024/12/Efisiensi-Biaya-dengan-Menggunakan-U-Ditch-Beton-dalam-Proyek-Konstruksi-1_11zon-1.jpg",
-    size: "± 12.000 m²"
-  },
-  {
-    id: 4,
-    title: "Icon Mall Gresik",
-    scope: "Finishing",
-    description: "Pekerjaan finishing area komersial pusat perbelanjaan",
-    image: "https://www.rumah123.com/seo-cms/assets/large_Perpaduan_Konsep_Natural_dan_Futuristik_285437ee5c/large_Perpaduan_Konsep_Natural_dan_Futuristik_285437ee5c.png",
-    size: "± 8.000 m²"
-  },
-  {
-    id: 5,
-    title: "PT. Hertz Flavors Makmur Indonesia",
-    scope: "Design & Build • Acoustic Installation • Finishing",
-    description: "Pekerjaan rancang bangun fasilitas kantor",
-    image: "https://tobaccoreporter.com/wp-content/uploads/2023/11/OUTSIDE-FACTORY.jpg",
-    size: "± 6.000 m²"
+type FeaturedProject = {
+  id: number;
+  title: string;
+  scope: string;
+  description: string;
+  image?: string;
+  image_url?: string;
+  size?: string;
+};
+
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE ?? 'http://127.0.0.1:8000';
+const isDev = process.env.NODE_ENV === 'development';
+
+const resolveImageUrl = (path?: string) => {
+  if (!path) return '';
+  if (path.startsWith('http://') || path.startsWith('https://')) return path;
+  if (path.startsWith('/')) return `${API_BASE}${path}`;
+  return `${API_BASE}/${path}`;
+};
+
+const formatSize = (size?: string) => {
+  if (!size) return '';
+  if (/^\d+$/.test(size)) {
+    return `${Number(size).toLocaleString('id-ID')} m²`;
   }
-];
+  return size;
+};
 
 export default function Hero() {
+  const [featuredProjects, setFeaturedProjects] = useState<FeaturedProject[]>([]);
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    const controller = new AbortController();
+
+    const loadFeaturedProjects = async () => {
+      try {
+        const response = await fetch(`${API_BASE}/api/featured-projects`, {
+          signal: controller.signal,
+        });
+        if (!response.ok) throw new Error('Failed to load featured projects');
+        const payload = await response.json();
+        setFeaturedProjects(Array.isArray(payload?.data) ? payload.data : []);
+      } catch (error) {
+        if (!controller.signal.aborted) {
+          setFeaturedProjects([]);
+        }
+      } finally {
+        if (!controller.signal.aborted) {
+          setIsLoading(false);
+        }
+      }
+    };
+
+    loadFeaturedProjects();
+
+    return () => controller.abort();
+  }, []);
+
+  useEffect(() => {
+    if (featuredProjects.length === 0) return;
     const timer = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % featuredProjects.length);
     }, 5000);
     return () => clearInterval(timer);
-  }, []);
+  }, [featuredProjects.length]);
+
+  useEffect(() => {
+    if (currentSlide >= featuredProjects.length) {
+      setCurrentSlide(0);
+    }
+  }, [currentSlide, featuredProjects.length]);
 
   const nextSlide = () => {
+    if (featuredProjects.length === 0) return;
     setCurrentSlide((prev) => (prev + 1) % featuredProjects.length);
   };
 
   const prevSlide = () => {
+    if (featuredProjects.length === 0) return;
     setCurrentSlide((prev) => (prev - 1 + featuredProjects.length) % featuredProjects.length);
   };
 
   return (
     <section id="hero" className="relative isolate overflow-hidden bg-brand-dark text-white pt-32 pb-24 hero-mask">
       <div className="absolute inset-0 opacity-80" aria-hidden="true">
-        <img 
+        <Image 
           src="https://images.unsplash.com/photo-1503387762-592deb58ef4e?q=80&w=1200&auto=format&fit=crop" 
           alt="Gedung modern" 
-          className="h-full w-full object-cover mix-blend-soft-light"
+          fill
+          sizes="100vw"
+          priority
+          className="object-cover mix-blend-soft-light"
         />
       </div>
       <div className="absolute inset-0 bg-gradient-to-b from-[#053895]/95 via-[#032257]/85 to-[#021b4f]" aria-hidden="true"></div>
@@ -134,29 +161,54 @@ export default function Hero() {
 
                 {/* Slider Content */}
                 <div className="relative">
-                  {featuredProjects.map((project, index) => (
-                    <div
-                      key={project.id}
-                      className={`transition-all duration-500 ${index === currentSlide ? 'opacity-100 translate-x-0' : 'opacity-0 absolute inset-0'}`}
-                      style={{ transform: index === currentSlide ? 'translateX(0)' : index < currentSlide ? 'translateX(-100%)' : 'translateX(100%)' }}
-                    >
-                      <img 
-                        src={project.image} 
-                        className="rounded-2xl w-full h-56 object-cover" 
-                        alt={project.title}
-                      />
-                      <div className="mt-4 space-y-2">
-                        <div className="flex items-center justify-between">
-                          <span className="text-xs uppercase tracking-[0.2em] text-white/60">{project.scope}</span>
+                  {isLoading && (
+                    <div className="text-white/70 text-sm py-10 text-center">
+                      Memuat proyek unggulan...
+                    </div>
+                  )}
+                  {!isLoading && featuredProjects.length === 0 && (
+                    <div className="text-white/70 text-sm py-10 text-center">
+                      Belum ada proyek unggulan.
+                    </div>
+                  )}
+                  {featuredProjects.map((project, index) => {
+                    const imageSrc = resolveImageUrl(project.image_url ?? project.image);
+                    return (
+                      <div
+                        key={project.id}
+                        className={`transition-all duration-500 ${index === currentSlide ? 'opacity-100 translate-x-0' : 'opacity-0 absolute inset-0'}`}
+                        style={{ transform: index === currentSlide ? 'translateX(0)' : index < currentSlide ? 'translateX(-100%)' : 'translateX(100%)' }}
+                      >
+                        <div className="relative h-56">
+                          {imageSrc ? (
+                            <Image 
+                              src={imageSrc} 
+                              alt={project.title}
+                              fill
+                              sizes="(min-width: 1024px) 480px, 90vw"
+                              priority={index === 0}
+                              unoptimized={isDev}
+                              className="rounded-2xl object-cover"
+                            />
+                          ) : (
+                            <div className="h-56 rounded-2xl bg-white/10 flex items-center justify-center text-white/60 text-xs">
+                              Gambar belum tersedia
+                            </div>
+                          )}
                         </div>
-                        <h3 className="text-white font-semibold text-lg">{project.title}</h3>
-                        <p className="text-white/70 text-sm">{project.description}</p>
-                        <div className="flex items-center gap-4 text-xs text-white/60">
-                          <span>📏 {project.size}</span>
+                        <div className="mt-4 space-y-2">
+                          <div className="flex items-center justify-between">
+                            <span className="text-xs uppercase tracking-[0.2em] text-white/60">{project.scope}</span>
+                          </div>
+                          <h3 className="text-white font-semibold text-lg">{project.title}</h3>
+                          <p className="text-white/70 text-sm">{project.description}</p>
+                          <div className="flex items-center gap-4 text-xs text-white/60">
+                            <span>📏 {formatSize(project.size)}</span>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
 
                 {/* Slider Indicators */}
@@ -169,6 +221,7 @@ export default function Hero() {
                         index === currentSlide ? 'bg-accent' : 'bg-white/30'
                       }`}
                       aria-label={`Go to slide ${index + 1}`}
+                      disabled={featuredProjects.length === 0}
                     />
                   ))}
                 </div>

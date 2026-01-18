@@ -26,7 +26,7 @@ export default function About() {
           <div className="rounded-[32px] bg-brand-dark text-white p-8 shadow-soft relative overflow-hidden">
             <div className="absolute inset-0 opacity-30" style={{background: 'radial-gradient(circle at 80% 20%,rgba(255,189,0,.5),transparent 60%)'}}></div>
             <div className="relative">
-              <p className="text-sm uppercase tracking-[0.3em] text-white/70">Vision & Misiion</p>
+              <p className="text-sm uppercase tracking-[0.3em] text-white/70">Vision & Mission</p>
               <div className="mt-6 space-y-6 text-white/80">
                 <div>
                   <p className="text-xs uppercase tracking-[0.4em] text-white/60">VISION</p>
