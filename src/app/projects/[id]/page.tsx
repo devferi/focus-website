@@ -34,7 +34,7 @@ const sortImages = (images?: ProjectImage[]) => {
   return [...images].sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0));
 };
 
-const fetchProjects = async () => {
+const fetchProjects = async (): Promise<Project[]> => {
   const response = await fetch(`${API_BASE}/api/projects`, { cache: 'no-store' });
   if (!response.ok) return [];
   const payload = await response.json();
@@ -45,7 +45,7 @@ const fetchProjects = async () => {
 export default async function ProjectDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const projectId = Number.parseInt(id, 10);
-  const projects = await fetchProjects();
+  const projects: Project[] = await fetchProjects();
   const project = projects.find((item) => item.id === projectId);
 
   if (!project) {
