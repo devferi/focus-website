@@ -45,6 +45,8 @@ export default function Projects() {
   const [sectorFilter, setSectorFilter] = useState('');
   const [locationFilter, setLocationFilter] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const perPage = 4;
 
   useEffect(() => {
     const controller = new AbortController();
@@ -91,6 +93,16 @@ export default function Projects() {
            (!locationFilter || project.location === locationFilter) &&
            (!statusFilter || project.status === statusFilter);
   });
+
+  const totalPages = Math.max(1, Math.ceil(filteredProjects.length / perPage));
+  const paginatedProjects = filteredProjects.slice(
+    (currentPage - 1) * perPage,
+    currentPage * perPage
+  );
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [sectorFilter, locationFilter, statusFilter, projects.length]);
 
   return (
     <section id="projects" className="py-20 bg-brand-dark text-white">
@@ -149,7 +161,7 @@ export default function Projects() {
               Belum ada proyek yang sesuai.
             </div>
           )}
-          {!isLoading && filteredProjects.map((project) => {
+          {!isLoading && paginatedProjects.map((project) => {
             const primaryImage = getPrimaryImage(project.images);
 
             return (
@@ -192,6 +204,29 @@ export default function Projects() {
             );
           })}
         </div>
+        {!isLoading && totalPages > 1 && (
+          <div className="mt-10 flex items-center justify-center gap-2 text-sm">
+            <button
+              type="button"
+              onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
+              className="rounded-full border border-white/20 px-4 py-2 text-white/80 hover:text-white hover:border-white/40 transition-colors disabled:opacity-40"
+              disabled={currentPage === 1}
+            >
+              Prev
+            </button>
+            <span className="px-3 text-white/70">
+              {currentPage} / {totalPages}
+            </span>
+            <button
+              type="button"
+              onClick={() => setCurrentPage((prev) => Math.min(totalPages, prev + 1))}
+              className="rounded-full border border-white/20 px-4 py-2 text-white/80 hover:text-white hover:border-white/40 transition-colors disabled:opacity-40"
+              disabled={currentPage === totalPages}
+            >
+              Next
+            </button>
+          </div>
+        )}
       </div>
     </section>
   );
