@@ -1,74 +1,90 @@
 'use client';
 
-import { useState } from 'react';
+import Link from 'next/link';
+import { useEffect, useMemo, useState } from 'react';
 
-const projects = [
-  {
-    id: 1,
-    title: "Hotel & Resort Kaliandra – Pandaan",
-    sector: "Infrastructure Project",
-    location: "Pandaan",
-    status: "Featured",
-    image: "https://images.unsplash.com/photo-1505691938895-1758d7feb511?auto=format&fit=crop&w=1600&q=80",
-    description: "Pekerjaan infrastruktur menyeluruh untuk kawasan hotel & resort Kaliandra.",
-    badge: "Infrastructure Project"
-  },
-  {
-    id: 2,
-    title: "Infrastruktur PEMKOT Surabaya",
-    sector: "Infrastructure Project",
-    location: "Surabaya",
-    status: "Featured",
-    image: "https://images.unsplash.com/photo-1470246973918-29a93221c455?auto=format&fit=crop&w=1600&q=80",
-    description: "Paket pekerjaan infrastruktur untuk Pemerintah Kota Surabaya.",
-    badge: "Infrastructure Project"
-  },
-  {
-    id: 3,
-    title: "Ballroom Ciputra World Surabaya",
-    sector: "Finishing Contractor",
-    location: "Surabaya",
-    status: "Featured",
-    image: "https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=1600&q=80",
-    description: "Pekerjaan finishing ballroom dengan standar venue premium.",
-    badge: "Finishing Contractor"
-  },
-  {
-    id: 4,
-    title: "Ruang Musik NSC – Surabaya",
-    sector: "Acoustic Project",
-    location: "Surabaya",
-    status: "Featured",
-    image: "https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=1600&q=80",
-    description: "Instalasi akustik untuk New Surabaya College (NSC).",
-    badge: "Acoustic Project"
-  },
-  {
-    id: 5,
-    title: "Meeting Room & Lobby PT. Hertz Flavors",
-    sector: "Design and Build",
-    location: "Mojokerto",
-    status: "Featured",
-    image: "https://images.unsplash.com/photo-1520607162513-77705c0f0d4a?auto=format&fit=crop&w=1600&q=80",
-    description: "Pembenahan meeting room, office staff, dan lobby di Ngoro – Mojokerto.",
-    badge: "Design and Build"
-  },
-  {
-    id: 6,
-    title: "Director Room PT. Hertz Flavors",
-    sector: "Acoustic Project",
-    location: "Mojokerto",
-    status: "Featured",
-    image: "https://images.unsplash.com/photo-1484154218962-a197022b5858?auto=format&fit=crop&w=1600&q=80",
-    description: "Penataan ruang direktur dengan kebutuhan akustik dan finishing khusus.",
-    badge: "Acoustic Project"
-  }
-];
+type ProjectImage = {
+  id: number;
+  image?: string;
+  image_url?: string;
+  sort_order?: number;
+};
+
+type Project = {
+  id: number;
+  title: string;
+  sector: string;
+  location: string;
+  status: string;
+  description: string;
+  badge: string;
+  sort_order?: number;
+  is_active?: boolean;
+  images?: ProjectImage[];
+};
+
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE ?? 'http://127.0.0.1:8000';
+
+const resolveImageUrl = (path?: string) => {
+  if (!path) return '';
+  if (path.startsWith('http://') || path.startsWith('https://')) return path;
+  if (path.startsWith('/')) return `${API_BASE}${path}`;
+  return `${API_BASE}/${path}`;
+};
+
+const getPrimaryImage = (images?: ProjectImage[]) => {
+  if (!images || images.length === 0) return '';
+  const sorted = [...images].sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0));
+  const primary = sorted[0];
+  return resolveImageUrl(primary.image_url ?? primary.image);
+};
 
 export default function Projects() {
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [sectorFilter, setSectorFilter] = useState('');
   const [locationFilter, setLocationFilter] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
+
+  useEffect(() => {
+    const controller = new AbortController();
+
+    const loadProjects = async () => {
+      try {
+        const response = await fetch(`${API_BASE}/api/projects`, {
+          signal: controller.signal,
+        });
+        if (!response.ok) throw new Error('Failed to load projects');
+        const payload = await response.json();
+        const items = Array.isArray(payload?.data) ? payload.data : [];
+        setProjects(items.filter((item: Project) => item.is_active !== false));
+      } catch (error) {
+        if (!controller.signal.aborted) {
+          setProjects([]);
+        }
+      } finally {
+        if (!controller.signal.aborted) {
+          setIsLoading(false);
+        }
+      }
+    };
+
+    loadProjects();
+
+    return () => controller.abort();
+  }, []);
+
+  const sectorOptions = useMemo(() => {
+    return Array.from(new Set(projects.map((item) => item.sector).filter(Boolean))).sort();
+  }, [projects]);
+
+  const locationOptions = useMemo(() => {
+    return Array.from(new Set(projects.map((item) => item.location).filter(Boolean))).sort();
+  }, [projects]);
+
+  const statusOptions = useMemo(() => {
+    return Array.from(new Set(projects.map((item) => item.status).filter(Boolean))).sort();
+  }, [projects]);
 
   const filteredProjects = projects.filter(project => {
     return (!sectorFilter || project.sector === sectorFilter) &&
@@ -96,10 +112,9 @@ export default function Projects() {
               className="rounded-2xl border border-white/20 bg-transparent px-4 py-2 focus:border-accent focus:ring-0 w-full"
             >
               <option value="">Jenis pekerjaan</option>
-              <option>Design and Build</option>
-              <option>Finishing Contractor</option>
-              <option>Infrastructure Project</option>
-              <option>Acoustic Project</option>
+              {sectorOptions.map((sector) => (
+                <option key={sector}>{sector}</option>
+              ))}
             </select>
             <select 
               value={locationFilter} 
@@ -107,9 +122,9 @@ export default function Projects() {
               className="rounded-2xl border border-white/20 bg-transparent px-4 py-2 focus:border-accent focus:ring-0 w-full"
             >
               <option value="">Lokasi</option>
-              <option>Pandaan</option>
-              <option>Surabaya</option>
-              <option>Mojokerto</option>
+              {locationOptions.map((location) => (
+                <option key={location}>{location}</option>
+              ))}
             </select>
             <select 
               value={statusFilter} 
@@ -117,37 +132,65 @@ export default function Projects() {
               className="rounded-2xl border border-white/20 bg-transparent px-4 py-2 focus:border-accent focus:ring-0 w-full"
             >
               <option value="">Label</option>
-              <option>Featured</option>
+              {statusOptions.map((status) => (
+                <option key={status}>{status}</option>
+              ))}
             </select>
           </div>
         </div>
         <div className="mt-10 grid md:grid-cols-2 gap-6">
-          {filteredProjects.map((project) => (
-            <article 
-              key={project.id} 
-              className="project-card group rounded-[28px] border border-white/15 bg-white/5 backdrop-blur px-6 pt-6 pb-5 focus:outline-none focus:ring-2 focus:ring-accent"
-            >
-              <div className="overflow-hidden rounded-2xl">
-                <img 
-                  src={project.image} 
-                  alt={project.title}
-                  className="h-64 w-full object-cover transition duration-500 group-hover:scale-105"
-                />
-              </div>
-              <div className="project-meta mt-5 flex items-center justify-between text-xs uppercase tracking-[0.2em] text-white/60">
-                <span>{project.sector} • {project.location}</span>
-                <span>{project.status}</span>
-              </div>
-              <h3 className="mt-2 text-2xl font-semibold">{project.title}</h3>
-              <p className="project-desc mt-2 text-sm text-white/70">{project.description}</p>
-              <div className="mt-4 flex items-center gap-2 text-xs">
-                <span className="badge-status rounded-full bg-emerald-400/20 text-emerald-200 px-3 py-1">
-                  {project.badge}
-                </span>
-                <span className="badge-kpi rounded-full bg-white/10 px-3 py-1">Lihat detail</span>
-              </div>
-            </article>
-          ))}
+          {isLoading && (
+            <div className="col-span-full text-sm text-white/70 text-center py-10">
+              Memuat proyek...
+            </div>
+          )}
+          {!isLoading && filteredProjects.length === 0 && (
+            <div className="col-span-full text-sm text-white/70 text-center py-10">
+              Belum ada proyek yang sesuai.
+            </div>
+          )}
+          {!isLoading && filteredProjects.map((project) => {
+            const primaryImage = getPrimaryImage(project.images);
+
+            return (
+              <article 
+                key={project.id} 
+                className="project-card group rounded-[28px] border border-white/15 bg-white/5 backdrop-blur px-6 pt-6 pb-5 focus:outline-none focus:ring-2 focus:ring-accent"
+              >
+                <div className="overflow-hidden rounded-2xl">
+                  {primaryImage ? (
+                    <img 
+                      src={primaryImage} 
+                      alt={project.title}
+                      className="h-64 w-full object-cover transition duration-500 group-hover:scale-105"
+                    />
+                  ) : (
+                    <div className="h-64 w-full bg-white/10 flex items-center justify-center text-xs text-white/60">
+                      Gambar belum tersedia
+                    </div>
+                  )}
+                </div>
+                <div className="project-meta mt-5 flex items-center justify-between text-xs uppercase tracking-[0.2em] text-white/60">
+                  <span>{project.sector} • {project.location}</span>
+                  <span>{project.status}</span>
+                </div>
+                <h3 className="mt-2 text-2xl font-semibold">{project.title}</h3>
+                <p className="project-desc mt-2 text-sm text-white/70 line-clamp-3">{project.description}</p>
+                <div className="mt-4 flex items-center gap-2 text-xs">
+                  <span className="badge-status rounded-full bg-emerald-400/20 text-emerald-200 px-3 py-1">
+                    {project.badge}
+                  </span>
+                  <Link
+                    href={`/projects/${project.id}`}
+                    className="badge-kpi rounded-full bg-white/10 px-3 py-1 hover:bg-white/20 transition-colors"
+                    aria-label={`Lihat detail ${project.title}`}
+                  >
+                    Lihat detail
+                  </Link>
+                </div>
+              </article>
+            );
+          })}
         </div>
       </div>
     </section>
