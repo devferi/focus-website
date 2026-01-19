@@ -20,10 +20,21 @@ function WhatsAppIcon({ className = "w-4 h-4" }: { className?: string }) {
 export default function Contact() {
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [previews, setPreviews] = useState<string[]>([]);
+  const [name, setName] = useState('');
+  const [company, setCompany] = useState('');
+  const [email, setEmail] = useState('');
+  const [projectLocation, setProjectLocation] = useState('');
+  const [areaEstimate, setAreaEstimate] = useState('');
+  const [timeline, setTimeline] = useState('');
+  const [projectDescription, setProjectDescription] = useState('');
+  const [submitState, setSubmitState] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
+  const [submitMessage, setSubmitMessage] = useState('');
   const [cpName, setCpName] = useState('');
   const [cpPhone, setCpPhone] = useState('');
   const [cpDomisili, setCpDomisili] = useState('');
   const pdfUrl = "https://focustradingcontractor.com/wp-content/uploads/2020/06/Company-Profile-Cv.-Focus-Trading-Contractor-2020.pdf";
+  const API_BASE = process.env.NEXT_PUBLIC_API_BASE ?? 'http://127.0.0.1:8000';
+  const maxFiles = 5;
 
   const phoneDigits = cpPhone.replace(/\D/g, '');
   const canDownload = cpName.trim().length >= 2 && phoneDigits.length >= 10 && cpDomisili.trim().length >= 2;
@@ -38,7 +49,8 @@ export default function Contact() {
 
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(event.target.files || []);
-    
+    if (files.length === 0) return;
+
     // Validasi file (hanya gambar)
     const validFiles = files.filter(file => 
       file.type.startsWith('image/') && file.size <= 5 * 1024 * 1024 // Max 5MB
@@ -48,10 +60,16 @@ export default function Contact() {
       alert('Beberapa file tidak valid. Pastikan hanya gambar dengan ukuran maksimal 5MB.');
     }
 
-    setSelectedFiles(prev => [...prev, ...validFiles]);
+    const availableSlots = Math.max(0, maxFiles - selectedFiles.length);
+    const limitedFiles = validFiles.slice(0, availableSlots);
+    if (limitedFiles.length < validFiles.length) {
+      alert(`Maksimal ${maxFiles} gambar. Hanya ${limitedFiles.length} gambar yang ditambahkan.`);
+    }
+
+    setSelectedFiles(prev => [...prev, ...limitedFiles]);
 
     // Buat preview untuk gambar yang dipilih
-    validFiles.forEach(file => {
+    limitedFiles.forEach(file => {
       const reader = new FileReader();
       reader.onload = (e) => {
         setPreviews(prev => [...prev, e.target?.result as string]);
@@ -65,18 +83,61 @@ export default function Contact() {
     setPreviews(prev => prev.filter((_, i) => i !== index));
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    
-    if (selectedFiles.length > 0) {
-      alert(`Terima kasih! Permintaan Anda dengan ${selectedFiles.length} gambar telah dikirim. Tim kami akan menghubungi Anda.`);
-    } else {
-      alert('Terima kasih, tim kami akan menghubungi Anda.');
+
+    if (submitState === 'submitting') return;
+
+    setSubmitState('submitting');
+    setSubmitMessage('');
+
+    try {
+      const formData = new FormData();
+      formData.append('name', name);
+      formData.append('company', company);
+      formData.append('email', email);
+      formData.append('project_location', projectLocation);
+      formData.append('area_estimate', areaEstimate);
+      formData.append('timeline', timeline);
+      formData.append('project_description', projectDescription);
+      selectedFiles.forEach((file) => {
+        formData.append('project_images[]', file);
+      });
+
+      const response = await fetch(`${API_BASE}/api/project-requests`, {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!response.ok) {
+        let errorMessage = 'Gagal mengirim permintaan. Coba lagi.';
+        try {
+          const payload = await response.json();
+          if (payload?.message) {
+            errorMessage = payload.message;
+          }
+        } catch {
+          // ignore parse errors
+        }
+        throw new Error(errorMessage);
+      }
+
+      setSubmitState('success');
+      setSubmitMessage('Terima kasih! Permintaan Anda sudah kami terima.');
+      setName('');
+      setCompany('');
+      setEmail('');
+      setProjectLocation('');
+      setAreaEstimate('');
+      setTimeline('');
+      setProjectDescription('');
+      setSelectedFiles([]);
+      setPreviews([]);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Terjadi kesalahan saat mengirim.';
+      setSubmitState('error');
+      setSubmitMessage(message);
     }
-    
-    // Reset form
-    setSelectedFiles([]);
-    setPreviews([]);
   };
 
   return (
@@ -138,6 +199,9 @@ export default function Contact() {
                   <input 
                     type="text" 
                     required 
+                    name="name"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
                     className="mt-1 w-full rounded-2xl border border-slate-200 px-4 py-3 focus:border-brand focus:ring-brand" 
                     placeholder="Nama lengkap"
                   />
@@ -146,6 +210,10 @@ export default function Contact() {
                   <label className="text-sm font-medium text-slate-600">Perusahaan</label>
                   <input 
                     type="text" 
+                    required
+                    name="company"
+                    value={company}
+                    onChange={(e) => setCompany(e.target.value)}
                     className="mt-1 w-full rounded-2xl border border-slate-200 px-4 py-3 focus:border-brand focus:ring-brand" 
                     placeholder="PT Anda"
                   />
@@ -157,6 +225,9 @@ export default function Contact() {
                   <input 
                     type="email" 
                     required 
+                    name="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
                     className="mt-1 w-full rounded-2xl border border-slate-200 px-4 py-3 focus:border-brand focus:ring-brand" 
                     placeholder="email@perusahaan.com"
                   />
@@ -165,6 +236,10 @@ export default function Contact() {
                   <label className="text-sm font-medium text-slate-600">Lokasi Proyek</label>
                   <input 
                     type="text" 
+                    required
+                    name="project_location"
+                    value={projectLocation}
+                    onChange={(e) => setProjectLocation(e.target.value)}
                     className="mt-1 w-full rounded-2xl border border-slate-200 px-4 py-3 focus:border-brand focus:ring-brand" 
                     placeholder="Kota / Area"
                   />
@@ -173,7 +248,13 @@ export default function Contact() {
               <div className="grid sm:grid-cols-2 gap-4">
                 <div>
                   <label className="text-sm font-medium text-slate-600">Perkiraan Luas</label>
-                  <select className="mt-1 w-full rounded-2xl border border-slate-200 px-4 py-3 focus:border-brand focus:ring-brand">
+                  <select 
+                    required
+                    name="area_estimate"
+                    value={areaEstimate}
+                    onChange={(e) => setAreaEstimate(e.target.value)}
+                    className="mt-1 w-full rounded-2xl border border-slate-200 px-4 py-3 focus:border-brand focus:ring-brand"
+                  >
                     <option value="">Pilih luas</option>
                     <option>&lt; 300 m²</option>
                     <option>300 – 1.000 m²</option>
@@ -183,7 +264,13 @@ export default function Contact() {
                 </div>
                 <div>
                   <label className="text-sm font-medium text-slate-600">Timeline</label>
-                  <select className="mt-1 w-full rounded-2xl border border-slate-200 px-4 py-3 focus:border-brand focus:ring-brand">
+                  <select 
+                    required
+                    name="timeline"
+                    value={timeline}
+                    onChange={(e) => setTimeline(e.target.value)}
+                    className="mt-1 w-full rounded-2xl border border-slate-200 px-4 py-3 focus:border-brand focus:ring-brand"
+                  >
                     <option value="">Pilih timeline</option>
                     <option>Segera</option>
                     <option>1 – 3 bulan</option>
@@ -196,6 +283,10 @@ export default function Contact() {
                 <label className="text-sm font-medium text-slate-600">Deskripsi Proyek</label>
                 <textarea 
                   rows={4} 
+                  required
+                  name="project_description"
+                  value={projectDescription}
+                  onChange={(e) => setProjectDescription(e.target.value)}
                   className="mt-1 w-full rounded-2xl border border-slate-200 px-4 py-3 focus:border-brand focus:ring-brand" 
                   placeholder="Ruang lingkup, kebutuhan khusus, standar internal"
                 ></textarea>
@@ -261,11 +352,23 @@ export default function Contact() {
                   </div>
                 )}
               </div>
+              {submitMessage && (
+                <div
+                  className={`rounded-xl px-4 py-3 text-sm ${
+                    submitState === 'success'
+                      ? 'bg-emerald-50 text-emerald-700'
+                      : 'bg-rose-50 text-rose-700'
+                  }`}
+                >
+                  {submitMessage}
+                </div>
+              )}
               <button 
                 type="submit"
-                className="rounded-2xl bg-brand px-6 py-3 text-white font-semibold hover:bg-brand/90"
+                className="rounded-2xl bg-brand px-6 py-3 text-white font-semibold hover:bg-brand/90 disabled:opacity-70"
+                disabled={submitState === 'submitting'}
               >
-                Kirim Permintaan
+                {submitState === 'submitting' ? 'Mengirim...' : 'Kirim Permintaan'}
               </button>
             </form>
           </div>
