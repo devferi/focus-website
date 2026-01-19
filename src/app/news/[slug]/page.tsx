@@ -1,21 +1,62 @@
-import { newsPosts } from '@/data/news';
 import Link from 'next/link';
 import { Calendar, Clock, User, Tag, Share2 } from 'lucide-react';
 import ShareButton from '@/components/ShareButton';
 
+type NewsItem = {
+  id: number;
+  title: string;
+  slug: string;
+  excerpt: string;
+  content?: string;
+  cover_image?: string;
+  cover_image_url?: string;
+  category?: string;
+  author?: string;
+  tags?: string[];
+  status?: string;
+  published_at?: string;
+  created_at?: string;
+  readTime?: string;
+};
+
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE ?? 'http://127.0.0.1:8000';
+
+const resolveImageUrl = (path?: string) => {
+  if (!path) return '';
+  if (path.startsWith('http://') || path.startsWith('https://')) return path;
+  if (path.startsWith('/')) return `${API_BASE}${path}`;
+  return `${API_BASE}/${path}`;
+};
+
+const fetchNewsList = async (): Promise<NewsItem[]> => {
+  const response = await fetch(`${API_BASE}/api/news`, { cache: 'no-store' });
+  if (!response.ok) return [];
+  const payload = await response.json();
+  const items = Array.isArray(payload?.data) ? payload.data : [];
+  return items.filter((item: NewsItem) => item.status !== 'draft');
+};
+
+const fetchNewsBySlug = async (slug: string): Promise<NewsItem | null> => {
+  const response = await fetch(`${API_BASE}/api/news/${encodeURIComponent(slug)}`, { cache: 'no-store' });
+  if (!response.ok) return null;
+  const payload = await response.json();
+  if (payload?.data) return payload.data;
+  return payload ?? null;
+};
+
 export default async function NewsDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const normalizedSlug = decodeURIComponent(slug).trim().toLowerCase();
-  const slugVariants = new Set<string>([
-    normalizedSlug,
-    normalizedSlug.replace(/-di-/g, '-'),
+  const normalizedSlug = decodeURIComponent(slug).trim();
+  const [newsList, newsDetail] = await Promise.all([
+    fetchNewsList(),
+    fetchNewsBySlug(normalizedSlug),
   ]);
-  const post = newsPosts.find((p) => {
-    const s = p.slug.trim().toLowerCase();
-    if (slugVariants.has(s)) return true;
-    // Fallback lenient match
-    return s.includes(normalizedSlug) || normalizedSlug.includes(s);
-  });
+  const slugVariants = new Set<string>([
+    normalizedSlug.toLowerCase(),
+    normalizedSlug.replace(/-di-/g, '-').toLowerCase(),
+  ]);
+  const fallbackPost = newsList.find((item) => slugVariants.has(item.slug?.toLowerCase() ?? ''));
+  const post = newsDetail ?? fallbackPost;
 
   if (!post) {
     return (
@@ -29,9 +70,11 @@ export default async function NewsDetailPage({ params }: { params: Promise<{ slu
     );
   }
 
+  const publishedAt = post.published_at ?? post.created_at ?? '';
+  const heroImage = resolveImageUrl(post.cover_image_url ?? post.cover_image);
   // Get related articles (excluding current post)
-  const relatedArticles = newsPosts
-    .filter(p => p.slug !== post.slug)
+  const relatedArticles = newsList
+    .filter((item) => item.slug !== post.slug)
     .slice(0, 3);
 
   return (
@@ -76,23 +119,25 @@ export default async function NewsDetailPage({ params }: { params: Promise<{ slu
               </div>
 
               {/* Article Meta */}
-              <div className="flex flex-wrap items-center gap-6 mb-8 pb-8 border-b border-slate-200">
-                <div className="flex items-center gap-2 text-sm text-slate-600">
-                  <User className="w-4 h-4" />
-                  <span>{post.author || 'Tim Focus Trading'}</span>
-                </div>
-                <div className="flex items-center gap-2 text-sm text-slate-600">
-                  <Calendar className="w-4 h-4" />
-                  <time dateTime={post.date}>
-                    {new Date(post.date).toLocaleDateString('id-ID', { 
-                      day: 'numeric', 
-                      month: 'long', 
-                      year: 'numeric' 
-                    })}
-                  </time>
+                <div className="flex flex-wrap items-center gap-6 mb-8 pb-8 border-b border-slate-200">
+                  <div className="flex items-center gap-2 text-sm text-slate-600">
+                    <User className="w-4 h-4" />
+                    <span>{post.author || 'Tim Focus Trading'}</span>
+                  </div>
+                  {publishedAt && (
+                    <div className="flex items-center gap-2 text-sm text-slate-600">
+                      <Calendar className="w-4 h-4" />
+                      <time dateTime={publishedAt}>
+                        {new Date(publishedAt).toLocaleDateString('id-ID', { 
+                          day: 'numeric', 
+                          month: 'long', 
+                          year: 'numeric' 
+                        })}
+                      </time>
+                    </div>
+                  )}
                 </div>
               </div>
-            </div>
 
             {/* Sidebar */}
             <div className="lg:col-span-1">
@@ -136,20 +181,33 @@ export default async function NewsDetailPage({ params }: { params: Promise<{ slu
             {/* Hero Image */}
             <div className="mb-12">
               <div className="relative overflow-hidden rounded-2xl shadow-xl">
-                <img 
-                  src={post.image} 
-                  alt={post.title} 
-                  className="w-full h-96 object-cover" 
-                />
+                {heroImage ? (
+                  <img 
+                    src={heroImage} 
+                    alt={post.title} 
+                    className="w-full h-96 object-cover" 
+                  />
+                ) : (
+                  <div className="w-full h-96 bg-slate-200 flex items-center justify-center text-sm text-slate-500">
+                    Gambar belum tersedia
+                  </div>
+                )}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
               </div>
             </div>
 
             {/* Article Body */}
             <article className="prose prose-lg prose-slate max-w-none">
-              <div className="text-lg leading-relaxed text-slate-700 whitespace-pre-line">
-                {post.content}
-              </div>
+              {post.content ? (
+                <div
+                  className="text-lg leading-relaxed text-slate-700"
+                  dangerouslySetInnerHTML={{ __html: post.content }}
+                />
+              ) : (
+                <div className="text-lg leading-relaxed text-slate-700 whitespace-pre-line">
+                  {post.excerpt}
+                </div>
+              )}
             </article>
 
             {/* Article Footer */}
@@ -184,6 +242,18 @@ export default async function NewsDetailPage({ params }: { params: Promise<{ slu
                       <span className="font-medium text-slate-900">{post.readTime}</span>
                     </div>
                   )}
+                  {publishedAt && (
+                    <div className="flex justify-between">
+                      <span className="text-slate-600">Tanggal:</span>
+                      <span className="font-medium text-slate-900">
+                        {new Date(publishedAt).toLocaleDateString('id-ID', { 
+                          day: 'numeric', 
+                          month: 'short', 
+                          year: 'numeric' 
+                        })}
+                      </span>
+                    </div>
+                  )}
                 </div>
               </div>
 
@@ -215,11 +285,24 @@ export default async function NewsDetailPage({ params }: { params: Promise<{ slu
                 <article key={article.slug} className="group">
                   <Link href={`/news/${article.slug}`} className="block">
                     <div className="overflow-hidden rounded-xl mb-4">
-                      <img 
-                        src={article.image} 
-                        alt={article.title}
-                        className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
-                      />
+                      {(() => {
+                        const relatedImage = resolveImageUrl(article.cover_image_url ?? article.cover_image);
+                        if (!relatedImage) {
+                          return (
+                            <div className="w-full h-48 bg-slate-200 flex items-center justify-center text-xs text-slate-500">
+                              Gambar belum tersedia
+                            </div>
+                          );
+                        }
+
+                        return (
+                          <img 
+                            src={relatedImage} 
+                            alt={article.title}
+                            className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+                          />
+                        );
+                      })()}
                     </div>
                     <h3 className="font-semibold text-slate-900 group-hover:text-brand transition-colors mb-2">
                       {article.title}
@@ -227,15 +310,17 @@ export default async function NewsDetailPage({ params }: { params: Promise<{ slu
                     <p className="text-sm text-slate-600 line-clamp-2">
                       {article.excerpt}
                     </p>
-                    <div className="flex items-center gap-2 mt-3 text-xs text-slate-500">
-                      <Calendar className="w-3 h-3" />
-                      <time dateTime={article.date}>
-                        {new Date(article.date).toLocaleDateString('id-ID', { 
-                          day: 'numeric', 
-                          month: 'short' 
-                        })}
-                      </time>
-                    </div>
+                    {article.published_at && (
+                      <div className="flex items-center gap-2 mt-3 text-xs text-slate-500">
+                        <Calendar className="w-3 h-3" />
+                        <time dateTime={article.published_at}>
+                          {new Date(article.published_at).toLocaleDateString('id-ID', { 
+                            day: 'numeric', 
+                            month: 'short' 
+                          })}
+                        </time>
+                      </div>
+                    )}
                   </Link>
                 </article>
               ))}
