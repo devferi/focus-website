@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Facebook, Globe, Instagram, Youtube, Linkedin, FileDown } from 'lucide-react';
+import { Facebook, Instagram, Youtube, Linkedin, FileDown } from 'lucide-react';
 
 function WhatsAppIcon({ className = "w-4 h-4" }: { className?: string }) {
   return (
@@ -32,19 +32,100 @@ export default function Contact() {
   const [cpName, setCpName] = useState('');
   const [cpPhone, setCpPhone] = useState('');
   const [cpDomisili, setCpDomisili] = useState('');
-  const pdfUrl = "https://focustradingcontractor.com/wp-content/uploads/2020/06/Company-Profile-Cv.-Focus-Trading-Contractor-2020.pdf";
+  const [cpStatus, setCpStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
+  const [cpMessage, setCpMessage] = useState('');
+  const [cpErrors, setCpErrors] = useState<{ name?: string; phone?: string; domicile?: string }>({});
   const API_BASE = process.env.NEXT_PUBLIC_API_BASE ?? 'http://127.0.0.1:8000';
   const maxFiles = 5;
 
-  const phoneDigits = cpPhone.replace(/\D/g, '');
-  const canDownload = cpName.trim().length >= 2 && phoneDigits.length >= 10 && cpDomisili.trim().length >= 2;
+  const validateCompanyProfile = () => {
+    const nextErrors: { name?: string; phone?: string; domicile?: string } = {};
+    const trimmedName = cpName.trim();
+    const trimmedDomisili = cpDomisili.trim();
+    const phoneDigits = cpPhone.replace(/\D/g, '');
 
-  const handleDownloadProfile = () => {
-    if (!canDownload) {
-      alert('Mohon lengkapi Nama, Nomor HP, dan Domisili untuk mengunduh Company Profile.');
+    if (trimmedName.length < 2) {
+      nextErrors.name = 'Nama minimal 2 karakter.';
+    }
+
+    if (phoneDigits.length < 10 || phoneDigits.length > 15) {
+      nextErrors.phone = 'Nomor HP harus 10–15 digit.';
+    }
+
+    if (!trimmedDomisili) {
+      nextErrors.domicile = 'Domisili wajib diisi.';
+    }
+
+    setCpErrors(nextErrors);
+    return Object.keys(nextErrors).length === 0;
+  };
+
+  const handleCompanyProfileSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    if (cpStatus === 'submitting') return;
+
+    if (!validateCompanyProfile()) {
+      setCpStatus('error');
+      setCpMessage('Periksa kembali data Anda.');
       return;
     }
-    window.open(pdfUrl, '_blank');
+
+    setCpStatus('submitting');
+    setCpMessage('');
+
+    try {
+      const payload = {
+        name: cpName.trim(),
+        phone: cpPhone.replace(/\D/g, ''),
+        domicile: cpDomisili.trim(),
+      };
+
+      const response = await fetch(`${API_BASE}/api/company-profile-downloads`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (!response.ok) {
+        let errorMessage = 'Gagal mengirim data. Coba lagi.';
+        try {
+          const data = await response.json();
+          if (data?.message) {
+            errorMessage = data.message;
+          }
+        } catch {
+          // ignore parse error
+        }
+        throw new Error(errorMessage);
+      }
+
+      const data = await response.json();
+      const downloadUrl = data?.download_url;
+
+      if (!downloadUrl) {
+        throw new Error('Download URL tidak tersedia.');
+      }
+
+      setCpStatus('success');
+      setCpMessage('Berhasil! Mengunduh Company Profile...');
+      setCpName('');
+      setCpPhone('');
+      setCpDomisili('');
+      setCpErrors({});
+
+      const link = document.createElement('a');
+      link.href = downloadUrl;
+      link.target = '_blank';
+      link.rel = 'noreferrer';
+      link.click();
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Terjadi kesalahan.';
+      setCpStatus('error');
+      setCpMessage(message);
+    }
   };
 
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -376,58 +457,81 @@ export default function Contact() {
 
         {/* Unduh Company Profile */}
         <div className="mt-8 rounded-3xl border border-white/20 bg-white/5 p-6">
-          <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6">
-            <div>
-              <p className="text-sm font-semibold tracking-[0.3em] text-white/60 uppercase">Unduh Company Profile</p>
-              <p className="mt-2 text-white/80 text-sm">Isi data singkat di bawah ini untuk mengunduh dokumen resmi perusahaan.</p>
+          <form onSubmit={handleCompanyProfileSubmit}>
+            <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6">
+              <div>
+                <p className="text-sm font-semibold tracking-[0.3em] text-white/60 uppercase">Unduh Company Profile</p>
+                <p className="mt-2 text-white/80 text-sm">Isi data singkat di bawah ini untuk mengunduh dokumen resmi perusahaan.</p>
+              </div>
+              <div className="w-full lg:w-auto grid sm:grid-cols-3 gap-3">
+                <div>
+                  <input
+                    type="text"
+                    className={`w-full rounded-2xl border bg-white/10 px-4 py-3 text-white placeholder-white/60 focus:outline-none focus:ring-1 ${
+                      cpErrors.name ? 'border-rose-300/80 focus:ring-rose-200' : 'border-white/20 focus:ring-white/50'
+                    }`}
+                    placeholder="Nama"
+                    value={cpName}
+                    onChange={(e) => {
+                      setCpName(e.target.value);
+                      if (cpErrors.name) setCpErrors((prev) => ({ ...prev, name: undefined }));
+                    }}
+                  />
+                  {cpErrors.name && <p className="mt-1 text-xs text-rose-200">{cpErrors.name}</p>}
+                </div>
+                <div>
+                  <input
+                    type="tel"
+                    className={`w-full rounded-2xl border bg-white/10 px-4 py-3 text-white placeholder-white/60 focus:outline-none focus:ring-1 ${
+                      cpErrors.phone ? 'border-rose-300/80 focus:ring-rose-200' : 'border-white/20 focus:ring-white/50'
+                    }`}
+                    placeholder="Nomor HP"
+                    value={cpPhone}
+                    onChange={(e) => {
+                      setCpPhone(e.target.value);
+                      if (cpErrors.phone) setCpErrors((prev) => ({ ...prev, phone: undefined }));
+                    }}
+                  />
+                  {cpErrors.phone && <p className="mt-1 text-xs text-rose-200">{cpErrors.phone}</p>}
+                </div>
+                <div>
+                  <input
+                    type="text"
+                    className={`w-full rounded-2xl border bg-white/10 px-4 py-3 text-white placeholder-white/60 focus:outline-none focus:ring-1 ${
+                      cpErrors.domicile ? 'border-rose-300/80 focus:ring-rose-200' : 'border-white/20 focus:ring-white/50'
+                    }`}
+                    placeholder="Domisili"
+                    value={cpDomisili}
+                    onChange={(e) => {
+                      setCpDomisili(e.target.value);
+                      if (cpErrors.domicile) setCpErrors((prev) => ({ ...prev, domicile: undefined }));
+                    }}
+                  />
+                  {cpErrors.domicile && <p className="mt-1 text-xs text-rose-200">{cpErrors.domicile}</p>}
+                </div>
+              </div>
             </div>
-            <div className="w-full lg:w-auto grid sm:grid-cols-3 gap-3">
-              <input
-                type="text"
-                className="w-full rounded-2xl border border-white/20 bg-white/10 px-4 py-3 text-white placeholder-white/60 focus:outline-none focus:ring-1 focus:ring-white/50"
-                placeholder="Nama"
-                value={cpName}
-                onChange={(e) => setCpName(e.target.value)}
-              />
-              <input
-                type="tel"
-                className="w-full rounded-2xl border border-white/20 bg-white/10 px-4 py-3 text-white placeholder-white/60 focus:outline-none focus:ring-1 focus:ring-white/50"
-                placeholder="Nomor HP"
-                value={cpPhone}
-                onChange={(e) => setCpPhone(e.target.value)}
-              />
-              <input
-                type="text"
-                className="w-full rounded-2xl border border-white/20 bg-white/10 px-4 py-3 text-white placeholder-white/60 focus:outline-none focus:ring-1 focus:ring-white/50"
-                placeholder="Domisili"
-                value={cpDomisili}
-                onChange={(e) => setCpDomisili(e.target.value)}
-              />
-            </div>
-          </div>
-          <div className="mt-4 flex items-center justify-between">
-            <p className="text-xs text-white/60">Data Anda hanya digunakan untuk keperluan tindak lanjut dan arsip internal.</p>
-            {canDownload ? (
-              <a
-                href={pdfUrl}
-                target="_blank"
-                rel="noreferrer"
-                className="inline-flex items-center gap-2 rounded-xl bg-accent px-4 py-2 text-sm font-semibold text-white shadow-soft hover:opacity-90"
+            {cpMessage && (
+              <div
+                className={`mt-4 rounded-xl px-4 py-2 text-sm ${
+                  cpStatus === 'success' ? 'bg-emerald-500/10 text-emerald-200' : 'bg-rose-500/10 text-rose-200'
+                }`}
               >
-                <FileDown className="w-4 h-4" />
-                Unduh PDF
-              </a>
-            ) : (
-              <button
-                onClick={handleDownloadProfile}
-                disabled
-                className="inline-flex items-center gap-2 rounded-xl bg-white/10 px-4 py-2 text-sm font-semibold text-white/60 shadow-soft cursor-not-allowed"
-              >
-                <FileDown className="w-4 h-4" />
-                Unduh PDF
-              </button>
+                {cpMessage}
+              </div>
             )}
-          </div>
+            <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
+              <p className="text-xs text-white/60">Data Anda hanya digunakan untuk keperluan tindak lanjut dan arsip internal.</p>
+              <button
+                type="submit"
+                disabled={cpStatus === 'submitting'}
+                className="inline-flex items-center gap-2 rounded-xl bg-accent px-4 py-2 text-sm font-semibold text-white shadow-soft hover:opacity-90 disabled:opacity-60"
+              >
+                <FileDown className="w-4 h-4" />
+                {cpStatus === 'submitting' ? 'Memproses...' : 'Unduh PDF'}
+              </button>
+            </div>
+          </form>
         </div>
       </div>
     </section>
