@@ -29,7 +29,7 @@ export default function Navigation() {
             className="flex items-center gap-3"
           >
             <img 
-              src="https://focustradingcontractor.com/wp-content/uploads/2023/12/LogoBiru-removebg.png" 
+              src="/logo.png" 
               alt="Focus Trading Contractor" 
               className="h-10 w-auto object-contain"
             />
