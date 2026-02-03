@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Navigation from "@/components/Navigation";
 function WhatsAppIcon({ className = "w-6 h-6" }: { className?: string }) {
@@ -15,18 +14,6 @@ function WhatsAppIcon({ className = "w-6 h-6" }: { className?: string }) {
     </svg>
   );
 }
-import Head from "next/head";
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
-
 export const metadata: Metadata = {
   title: "Focus Trading Contractor — Design & Build, Finishing, Acoustic",
   description: "CV. Focus Trading Contractor — Design & Build, Finishing Contractor & Acoustic Installation sejak 2013. Fast and reliable service for your project or a quick fix.",
@@ -45,7 +32,7 @@ export default function RootLayout({
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
       </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-slate-50`}
+        className="antialiased bg-slate-50"
       >
         <Navigation />
         {children}

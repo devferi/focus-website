@@ -193,7 +193,7 @@ export default function Projects() {
                     {project.badge}
                   </span>
                   <Link
-                    href={`/projects/${project.id}`}
+                    href={`/projects?id=${project.id}`}
                     className="badge-kpi rounded-full bg-white/10 px-3 py-1 hover:bg-white/20 transition-colors"
                     aria-label={`Lihat detail ${project.title}`}
                   >

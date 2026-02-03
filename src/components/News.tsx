@@ -95,7 +95,7 @@ export default function News() {
                   <div className="text-xs text-slate-500 uppercase tracking-[0.3em]">{post.category || 'Artikel'}</div>
                   <h3 className="mt-1 font-bold">{post.title}</h3>
                   <p className="mt-2 text-sm text-slate-600 flex-1 line-clamp-3">{post.excerpt}</p>
-                  <Link href={`/news/${post.slug}`} className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-brand hover:text-accent">
+                  <Link href={`/news?slug=${encodeURIComponent(post.slug)}`} className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-brand hover:text-accent">
                     Read more
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.6" d="M5 12h14m-6-6 6 6-6 6" />

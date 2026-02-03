@@ -11,6 +11,7 @@ type FeaturedProject = {
   image?: string;
   image_url?: string;
   size?: string;
+  sort_order?: number;
 };
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE ?? 'http://127.0.0.1:8000';
@@ -197,9 +198,9 @@ export default function Hero() {
                           )}
                         </div>
                         <div className="mt-4 space-y-2">
-                          <div className="flex items-center justify-between">
-                            <span className="text-xs uppercase tracking-[0.2em] text-white/60">{project.scope}</span>
-                          </div>
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs uppercase tracking-[0.2em] text-white/60">{project.scope}</span>
+                        </div>
                           <h3 className="text-white font-semibold text-lg">{project.title}</h3>
                           <p className="text-white/70 text-sm">{project.description}</p>
                           <div className="flex items-center gap-4 text-xs text-white/60">
