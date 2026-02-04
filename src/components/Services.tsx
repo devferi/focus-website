@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { useState, useEffect } from 'react';
 
 export default function Services() {
@@ -93,12 +94,13 @@ export default function Services() {
         <div className="mt-10 grid md:grid-cols-2 gap-6">
           {/* Card 1 - Design and Build */}
           <div className={`transition-all duration-1000 delay-200 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
-            <article 
-              className={`group relative rounded-2xl p-6 h-full text-white overflow-hidden cursor-pointer transform transition-all duration-500 hover:scale-[1.03] hover:shadow-xl service-card-hover`}
-              style={{ backgroundColor: services[0].color }}
-              onMouseEnter={() => setExpandedCard(1)}
-              onMouseLeave={() => setExpandedCard(null)}
-            >
+            <Link href="/?sector=design-and-build#projects" className="block">
+              <article 
+                className={`group relative rounded-2xl p-6 h-full text-white overflow-hidden cursor-pointer transform transition-all duration-500 hover:scale-[1.03] hover:shadow-xl service-card-hover`}
+                style={{ backgroundColor: services[0].color }}
+                onMouseEnter={() => setExpandedCard(1)}
+                onMouseLeave={() => setExpandedCard(null)}
+              >
               {/* Animated Background */}
               <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 shine-effect">
                 <div className="absolute inset-0 bg-white/10 transform rotate-45 translate-x-full group-hover:translate-x-[-100%] transition-transform duration-1000"></div>
@@ -125,17 +127,19 @@ export default function Services() {
 
               {/* Decorative Elements */}
               <div className="absolute -top-2 -right-2 w-12 h-12 bg-white/5 rounded-full transform transition-transform duration-700 group-hover:scale-125 group-hover:-translate-x-1 group-hover:-translate-y-1"></div>
-            </article>
+              </article>
+            </Link>
           </div>
 
           {/* Card 2 - Finishing Contractor */}
           <div className={`transition-all duration-1000 delay-300 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
-            <article 
-              className={`group relative rounded-2xl p-6 h-full text-white overflow-hidden cursor-pointer transform transition-all duration-500 hover:scale-[1.03] hover:shadow-xl service-card-hover`}
-              style={{ backgroundColor: services[1].color }}
-              onMouseEnter={() => setExpandedCard(2)}
-              onMouseLeave={() => setExpandedCard(null)}
-            >
+            <Link href="/?sector=acoustic-project#projects" className="block">
+              <article 
+                className={`group relative rounded-2xl p-6 h-full text-white overflow-hidden cursor-pointer transform transition-all duration-500 hover:scale-[1.03] hover:shadow-xl service-card-hover`}
+                style={{ backgroundColor: services[1].color }}
+                onMouseEnter={() => setExpandedCard(2)}
+                onMouseLeave={() => setExpandedCard(null)}
+              >
               {/* Animated Background */}
               <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 shine-effect">
                 <div className="absolute inset-0 bg-white/10 transform rotate-45 translate-x-full group-hover:translate-x-[-100%] transition-transform duration-1000"></div>
@@ -162,17 +166,19 @@ export default function Services() {
 
               {/* Decorative Elements */}
               <div className="absolute -top-2 -right-2 w-12 h-12 bg-white/5 rounded-full transform transition-transform duration-700 group-hover:scale-125 group-hover:-translate-x-1 group-hover:-translate-y-1"></div>
-            </article>
+              </article>
+            </Link>
           </div>
 
           {/* Card 3 - Infrastructure Project */}
           <div className={`transition-all duration-1000 delay-400 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
-            <article 
-              className={`group relative rounded-2xl p-6 h-full text-white overflow-hidden cursor-pointer transform transition-all duration-500 hover:scale-[1.03] hover:shadow-xl service-card-hover`}
-              style={{ backgroundColor: services[2].color }}
-              onMouseEnter={() => setExpandedCard(3)}
-              onMouseLeave={() => setExpandedCard(null)}
-            >
+            <Link href="/?sector=finishing-contractor#projects" className="block">
+              <article 
+                className={`group relative rounded-2xl p-6 h-full text-white overflow-hidden cursor-pointer transform transition-all duration-500 hover:scale-[1.03] hover:shadow-xl service-card-hover`}
+                style={{ backgroundColor: services[2].color }}
+                onMouseEnter={() => setExpandedCard(3)}
+                onMouseLeave={() => setExpandedCard(null)}
+              >
               {/* Animated Background */}
               <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 shine-effect">
                 <div className="absolute inset-0 bg-white/10 transform rotate-45 translate-x-full group-hover:translate-x-[-100%] transition-transform duration-1000"></div>
@@ -199,17 +205,19 @@ export default function Services() {
 
               {/* Decorative Elements */}
               <div className="absolute -top-2 -right-2 w-12 h-12 bg-white/5 rounded-full transform transition-transform duration-700 group-hover:scale-125 group-hover:-translate-x-1 group-hover:-translate-y-1"></div>
-            </article>
+              </article>
+            </Link>
           </div>
 
           {/* Card 4 - Acoustic Project */}
           <div className={`transition-all duration-1000 delay-500 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
-            <article 
-              className={`group relative rounded-2xl p-6 h-full text-white overflow-hidden cursor-pointer transform transition-all duration-500 hover:scale-[1.03] hover:shadow-xl service-card-hover`}
-              style={{ backgroundColor: services[3].color }}
-              onMouseEnter={() => setExpandedCard(4)}
-              onMouseLeave={() => setExpandedCard(null)}
-            >
+            <Link href="/?sector=infrastructure-project#projects" className="block">
+              <article 
+                className={`group relative rounded-2xl p-6 h-full text-white overflow-hidden cursor-pointer transform transition-all duration-500 hover:scale-[1.03] hover:shadow-xl service-card-hover`}
+                style={{ backgroundColor: services[3].color }}
+                onMouseEnter={() => setExpandedCard(4)}
+                onMouseLeave={() => setExpandedCard(null)}
+              >
               {/* Animated Background */}
               <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 shine-effect">
                 <div className="absolute inset-0 bg-white/10 transform rotate-45 translate-x-full group-hover:translate-x-[-100%] transition-transform duration-1000"></div>
@@ -236,7 +244,8 @@ export default function Services() {
 
               {/* Decorative Elements */}
               <div className="absolute -top-2 -right-2 w-12 h-12 bg-white/5 rounded-full transform transition-transform duration-700 group-hover:scale-125 group-hover:-translate-x-1 group-hover:-translate-y-1"></div>
-            </article>
+              </article>
+            </Link>
           </div>
         </div>
       </div>

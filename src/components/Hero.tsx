@@ -1,6 +1,7 @@
 'use client';
 
 import Image from 'next/image';
+import Link from 'next/link';
 import { useState, useEffect } from 'react';
 
 type FeaturedProject = {
@@ -121,10 +122,10 @@ export default function Hero() {
               </a>
             </div>
             <div className="mt-8 flex flex-wrap gap-3 text-sm text-white/80 hero-tags">
-              <span className="rounded-full border border-white/30 px-4 py-2">Design & Build</span>
-              <span className="rounded-full border border-white/30 px-4 py-2">Finishing Contractor</span>
-              <span className="rounded-full border border-white/30 px-4 py-2">Infrastructure Project</span>
-              <span className="rounded-full border border-white/30 px-4 py-2">Acoustic Project</span>
+              <Link href="/?sector=design-and-build#projects" className="rounded-full border border-white/30 px-4 py-2 hover:bg-white/10 transition-colors">Design and Build</Link>
+              <Link href="/?sector=finishing-contractor#projects" className="rounded-full border border-white/30 px-4 py-2 hover:bg-white/10 transition-colors">Finishing Contractor</Link>
+              <Link href="/?sector=infrastructure-project#projects" className="rounded-full border border-white/30 px-4 py-2 hover:bg-white/10 transition-colors">Infrastructure Project</Link>
+              <Link href="/?sector=acoustic-project#projects" className="rounded-full border border-white/30 px-4 py-2 hover:bg-white/10 transition-colors">Acoustic Project</Link>
             </div>
           </div>
           

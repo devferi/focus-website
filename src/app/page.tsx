@@ -7,14 +7,21 @@ import News from '@/components/News';
 import Contact from '@/components/Contact';
 import Footer from '@/components/Footer';
 
-export default function Home() {
+type HomeProps = {
+  searchParams?: {
+    sector?: string;
+  };
+};
+
+export default function Home({ searchParams }: HomeProps) {
+  const initialSector = searchParams?.sector ?? '';
   return (
     <main className="min-h-screen">
       <Hero />
       <About />
       <Services />
       <Clients />
-      <Projects />
+      <Projects initialSector={initialSector} />
       <News />
       <Contact />
       <Footer />

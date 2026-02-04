@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { useEffect, useMemo, useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 type ProjectImage = {
   id: number;
@@ -39,7 +40,20 @@ const getPrimaryImage = (images?: ProjectImage[]) => {
   return resolveImageUrl(primary.image_url ?? primary.image);
 };
 
-export default function Projects() {
+const slugify = (value: string) =>
+  value
+    .toLowerCase()
+    .replace(/&/g, 'and')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/(^-|-$)/g, '');
+
+type ProjectsProps = {
+  initialSector?: string;
+};
+
+export default function Projects({ initialSector = '' }: ProjectsProps) {
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const [projects, setProjects] = useState<Project[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [sectorFilter, setSectorFilter] = useState('');
@@ -104,6 +118,17 @@ export default function Projects() {
     setCurrentPage(1);
   }, [sectorFilter, locationFilter, statusFilter, projects.length]);
 
+  // Sinkronkan sektor dari query string (prioritas) atau initialSector
+  useEffect(() => {
+    const rawSector = searchParams?.get('sector') ?? initialSector;
+    if (!rawSector) return;
+    const matched = sectorOptions.find((option) => slugify(option) === rawSector);
+    const nextValue = matched ?? rawSector;
+    if (nextValue !== sectorFilter) {
+      setSectorFilter(nextValue);
+    }
+  }, [searchParams, initialSector, sectorFilter, sectorOptions]);
+
   return (
     <section id="projects" className="py-20 bg-brand-dark text-white">
       <div className="mx-auto max-w-6xl px-4">
@@ -120,12 +145,23 @@ export default function Projects() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 text-xs filter-grid w-full">
             <select 
               value={sectorFilter} 
-              onChange={(e) => setSectorFilter(e.target.value)}
+              onChange={(e) => {
+                const value = e.target.value;
+                setSectorFilter(value);
+
+                // perbarui query string sehingga URL tetap mencerminkan filter saat ini
+                const params = new URLSearchParams(searchParams?.toString() ?? window.location.search);
+                if (value) params.set('sector', slugify(value));
+                else params.delete('sector');
+                const hash = window.location.hash ?? '';
+                const path = window.location.pathname + (params.toString() ? `?${params.toString()}` : '') + hash;
+                router.replace(path);
+              }}
               className="rounded-2xl border border-white/20 bg-transparent px-4 py-2 focus:border-accent focus:ring-0 w-full"
             >
               <option value="">Jenis pekerjaan</option>
               {sectorOptions.map((sector) => (
-                <option key={sector}>{sector}</option>
+                <option key={sector} value={sector}>{sector}</option>
               ))}
             </select>
             <select 
