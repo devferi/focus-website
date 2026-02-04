@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useEffect, useMemo, useState } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 
 type ProjectImage = {
   id: number;
@@ -53,7 +53,6 @@ type ProjectsProps = {
 
 export default function Projects({ initialSector = '' }: ProjectsProps) {
   const router = useRouter();
-  const searchParams = useSearchParams();
   const [projects, setProjects] = useState<Project[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [sectorFilter, setSectorFilter] = useState('');
@@ -118,16 +117,15 @@ export default function Projects({ initialSector = '' }: ProjectsProps) {
     setCurrentPage(1);
   }, [sectorFilter, locationFilter, statusFilter, projects.length]);
 
-  // Sinkronkan sektor dari query string (prioritas) atau initialSector
+  // Sinkronkan sektor dari initialSector (query string dari server)
   useEffect(() => {
-    const rawSector = searchParams?.get('sector') ?? initialSector;
-    if (!rawSector) return;
-    const matched = sectorOptions.find((option) => slugify(option) === rawSector);
-    const nextValue = matched ?? rawSector;
+    if (!initialSector) return;
+    const matched = sectorOptions.find((option) => slugify(option) === initialSector);
+    const nextValue = matched ?? initialSector;
     if (nextValue !== sectorFilter) {
       setSectorFilter(nextValue);
     }
-  }, [searchParams, initialSector, sectorFilter, sectorOptions]);
+  }, [initialSector, sectorFilter, sectorOptions]);
 
   return (
     <section id="projects" className="py-20 bg-brand-dark text-white">
@@ -150,7 +148,7 @@ export default function Projects({ initialSector = '' }: ProjectsProps) {
                 setSectorFilter(value);
 
                 // perbarui query string sehingga URL tetap mencerminkan filter saat ini
-                const params = new URLSearchParams(searchParams?.toString() ?? window.location.search);
+                const params = new URLSearchParams(window.location.search);
                 if (value) params.set('sector', slugify(value));
                 else params.delete('sector');
                 const hash = window.location.hash ?? '';
