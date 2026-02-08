@@ -10,7 +10,6 @@ type FeaturedProject = {
   description: string;
   image?: string;
   image_url?: string;
-  size?: string;
 };
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE ?? 'http://127.0.0.1:8000';
@@ -21,14 +20,6 @@ const resolveImageUrl = (path?: string) => {
   if (path.startsWith('http://') || path.startsWith('https://')) return path;
   if (path.startsWith('/')) return `${API_BASE}${path}`;
   return `${API_BASE}/${path}`;
-};
-
-const formatSize = (size?: string) => {
-  if (!size) return '';
-  if (/^\d+$/.test(size)) {
-    return `${Number(size).toLocaleString('id-ID')} m²`;
-  }
-  return size;
 };
 
 export default function Hero() {
@@ -122,7 +113,7 @@ export default function Hero() {
               <div className="rounded-[32px] bg-white/5 border border-white/10 p-6 shadow-soft overflow-hidden">
                 {/* Slider Header */}
                 <div className="flex items-center justify-between mb-4">
-                  <p className="text-xs tracking-[0.25em] uppercase text-white/60">Project Unggulan</p>
+                  <p className="text-xs tracking-[0.25em] uppercase text-white/60">Our Featured Project</p>
                   <div className="flex gap-2">
                     <button 
                       onClick={prevSlide}
@@ -188,9 +179,6 @@ export default function Hero() {
                           </div>
                           <h3 className="text-white font-semibold text-lg">{project.title}</h3>
                           <p className="text-white/70 text-sm">{project.description}</p>
-                          <div className="flex items-center gap-4 text-xs text-white/60">
-                            <span>📏 {formatSize(project.size)}</span>
-                          </div>
                         </div>
                       </div>
                     );

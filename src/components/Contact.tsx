@@ -39,6 +39,7 @@ export default function Contact() {
   const [requestErrors, setRequestErrors] = useState<{ phone?: string; areaEstimate?: string }>({});
   const [cpName, setCpName] = useState('');
   const [cpPhone, setCpPhone] = useState('');
+  const [cpCompanyPhone, setCpCompanyPhone] = useState('');
   const [cpDomisili, setCpDomisili] = useState('');
   const [cpStatus, setCpStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
   const [cpMessage, setCpMessage] = useState('');
@@ -99,6 +100,7 @@ export default function Contact() {
       const payload = {
         name: cpName.trim(),
         phone: cpPhone.replace(/\D/g, ''),
+        company_phone: cpCompanyPhone.trim(),
         domicile: cpDomisili.trim(),
       };
 
@@ -134,6 +136,7 @@ export default function Contact() {
       setCpMessage('Berhasil! Mengunduh Company Profile...');
       setCpName('');
       setCpPhone('');
+      setCpCompanyPhone('');
       setCpDomisili('');
       setCpErrors({});
 
@@ -528,7 +531,7 @@ export default function Contact() {
                 <p className="text-sm font-semibold tracking-[0.3em] text-white/60 uppercase">Unduh Company Profile</p>
                 <p className="mt-2 text-white/80 text-sm">Isi data singkat di bawah ini untuk mengunduh dokumen resmi perusahaan.</p>
               </div>
-              <div className="w-full lg:w-auto grid sm:grid-cols-3 gap-3">
+              <div className="w-full lg:w-auto grid sm:grid-cols-4 gap-3">
                 <div>
                   <input
                     type="text"
@@ -558,6 +561,16 @@ export default function Contact() {
                     }}
                   />
                   {cpErrors.phone && <p className="mt-1 text-xs text-rose-200">{cpErrors.phone}</p>}
+                </div>
+                <div>
+                  <input
+                    type="tel"
+                    className="w-full rounded-2xl border bg-white/10 px-4 py-3 text-white placeholder-white/60 focus:outline-none focus:ring-1 border-white/20 focus:ring-white/50"
+                    placeholder="No Perusahaan"
+                    value={cpCompanyPhone}
+                    onChange={(e) => setCpCompanyPhone(e.target.value)}
+                  />
+                  <p className="mt-1 text-xs text-white/60">Kosongkan jika keperluan pribadi.</p>
                 </div>
                 <div>
                   <input

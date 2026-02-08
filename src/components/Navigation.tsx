@@ -51,7 +51,7 @@ export default function Navigation() {
               About us
             </button>
             <button 
-              onClick={() => navigateToSection('projects')} 
+              onClick={() => navigateToSection('services')} 
               className="hover:text-accent transition"
             >
               Projects
@@ -94,7 +94,7 @@ export default function Navigation() {
           <div className="md:hidden mt-2 mb-4 rounded-2xl glass border border-white/20 px-5 py-4 text-white text-sm">
             <nav className="grid gap-3">
               <button onClick={() => navigateToSection('about')}>About us</button>
-              <button onClick={() => navigateToSection('projects')}>Projects</button>
+              <button onClick={() => navigateToSection('services')}>Projects</button>
               <button onClick={() => navigateToSection('news')}>Update & News</button>
               <button onClick={() => navigateToSection('contact')}>Contact us</button>
             </nav>

@@ -52,7 +52,7 @@ export default function Clients() {
     return () => controller.abort();
   }, []);
   return (
-    <section className="py-16 bg-white">
+    <section className="py-16 bg-[#f8fafc]">
       <div className="mx-auto max-w-6xl px-4">
         <div className="flex flex-wrap items-end justify-between gap-6">
           <div>
@@ -74,20 +74,27 @@ export default function Clients() {
             </div>
           )}
           {logos.length > 0 && (
-            <ul className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-5">
+            <ul className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-5">
               {logos.map((logo) => {
                 const logoSrc = resolveLogoUrl(logo.logo_url ?? logo.logo);
                 return (
-                  <li key={logo.id} className="border border-slate-200 rounded-2xl bg-white p-4 flex items-center justify-center h-20 shadow-sm">
+                  <li
+                    key={logo.id}
+                    className="group h-24 rounded-2xl border border-slate-300 bg-white p-3 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md"
+                  >
                     {logoSrc ? (
-                      <img
-                        src={logoSrc}
-                        alt={logo.name}
-                        className="h-10 w-auto object-contain opacity-80 hover:opacity-100 transition-opacity"
-                        loading="lazy"
-                      />
+                      <div className="flex h-full w-full items-center justify-center rounded-xl bg-slate-50 px-3">
+                        <img
+                          src={logoSrc}
+                          alt={logo.name}
+                          className="h-14 w-full object-contain opacity-95 transition-opacity duration-200 group-hover:opacity-100"
+                          loading="lazy"
+                        />
+                      </div>
                     ) : (
-                      <span className="text-xs font-semibold text-slate-600">{logo.name}</span>
+                      <div className="flex h-full w-full items-center justify-center rounded-xl bg-slate-50 px-3">
+                        <span className="text-xs font-semibold text-slate-600 text-center">{logo.name}</span>
+                      </div>
                     )}
                   </li>
                 );

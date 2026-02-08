@@ -19,7 +19,7 @@ export default function Services() {
       <div className="mx-auto max-w-6xl px-4">
         <p className="text-sm font-semibold tracking-[0.3em] text-white/65 uppercase">Layanan</p>
         <h2 className="mt-3 text-3xl md:text-4xl font-bold text-white">
-          Pilih kategori layanan untuk melihat portfolio proyek.
+          Pilih kategori layanan untuk melihat portofolio proyek.
         </h2>
 
         <div className="mt-8 grid gap-x-6 gap-y-5 sm:grid-cols-2 lg:grid-cols-4">
