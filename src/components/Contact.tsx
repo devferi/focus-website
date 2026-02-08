@@ -18,17 +18,25 @@ function WhatsAppIcon({ className = "w-4 h-4" }: { className?: string }) {
 }
 
 export default function Contact() {
+  type FilePreview = {
+    kind: 'image' | 'file';
+    src?: string;
+    name: string;
+    ext: string;
+  };
+
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
-  const [previews, setPreviews] = useState<string[]>([]);
+  const [previews, setPreviews] = useState<FilePreview[]>([]);
   const [name, setName] = useState('');
   const [company, setCompany] = useState('');
   const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
   const [projectLocation, setProjectLocation] = useState('');
   const [areaEstimate, setAreaEstimate] = useState('');
-  const [timeline, setTimeline] = useState('');
   const [projectDescription, setProjectDescription] = useState('');
   const [submitState, setSubmitState] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
   const [submitMessage, setSubmitMessage] = useState('');
+  const [requestErrors, setRequestErrors] = useState<{ phone?: string; areaEstimate?: string }>({});
   const [cpName, setCpName] = useState('');
   const [cpPhone, setCpPhone] = useState('');
   const [cpDomisili, setCpDomisili] = useState('');
@@ -37,6 +45,19 @@ export default function Contact() {
   const [cpErrors, setCpErrors] = useState<{ name?: string; phone?: string; domicile?: string }>({});
   const API_BASE = process.env.NEXT_PUBLIC_API_BASE ?? 'http://127.0.0.1:8000';
   const maxFiles = 5;
+  const maxFileSize = 5 * 1024 * 1024;
+
+  const revokePreview = (preview: FilePreview) => {
+    if (preview.kind === 'image' && preview.src) {
+      URL.revokeObjectURL(preview.src);
+    }
+  };
+
+  const resetSelectedFiles = () => {
+    previews.forEach((preview) => revokePreview(preview));
+    setSelectedFiles([]);
+    setPreviews([]);
+  };
 
   const validateCompanyProfile = () => {
     const nextErrors: { name?: string; phone?: string; domicile?: string } = {};
@@ -132,42 +153,76 @@ export default function Contact() {
     const files = Array.from(event.target.files || []);
     if (files.length === 0) return;
 
-    // Validasi file (hanya gambar)
-    const validFiles = files.filter(file => 
-      file.type.startsWith('image/') && file.size <= 5 * 1024 * 1024 // Max 5MB
-    );
+    const allowedMimes = new Set(['image/jpeg', 'image/png', 'application/pdf']);
+    const allowedExtensions = new Set(['jpg', 'jpeg', 'png', 'pdf', 'dwg', 'dxf']);
+
+    const validFiles = files.filter((file) => {
+      const ext = file.name.split('.').pop()?.toLowerCase() ?? '';
+      const validType = allowedMimes.has(file.type) || allowedExtensions.has(ext);
+      const validSize = file.size <= maxFileSize;
+      return validType && validSize;
+    });
 
     if (validFiles.length !== files.length) {
-      alert('Beberapa file tidak valid. Pastikan hanya gambar dengan ukuran maksimal 5MB.');
+      alert('Beberapa file tidak valid. Format: JPG, PNG, PDF, DWG, DXF (maks. 5MB per file).');
     }
 
     const availableSlots = Math.max(0, maxFiles - selectedFiles.length);
     const limitedFiles = validFiles.slice(0, availableSlots);
     if (limitedFiles.length < validFiles.length) {
-      alert(`Maksimal ${maxFiles} gambar. Hanya ${limitedFiles.length} gambar yang ditambahkan.`);
+      alert(`Maksimal ${maxFiles} file. Hanya ${limitedFiles.length} file yang ditambahkan.`);
     }
 
-    setSelectedFiles(prev => [...prev, ...limitedFiles]);
+    setSelectedFiles((prev) => [...prev, ...limitedFiles]);
 
-    // Buat preview untuk gambar yang dipilih
-    limitedFiles.forEach(file => {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        setPreviews(prev => [...prev, e.target?.result as string]);
+    const nextPreviews: FilePreview[] = limitedFiles.map((file) => {
+      const ext = file.name.split('.').pop()?.toLowerCase() ?? '';
+      const isImage = file.type.startsWith('image/') || ext === 'jpg' || ext === 'jpeg' || ext === 'png';
+
+      return {
+        kind: isImage ? 'image' : 'file',
+        src: isImage ? URL.createObjectURL(file) : undefined,
+        name: file.name,
+        ext,
       };
-      reader.readAsDataURL(file);
     });
+    setPreviews((prev) => [...prev, ...nextPreviews]);
+
+    event.target.value = '';
   };
 
   const removeFile = (index: number) => {
-    setSelectedFiles(prev => prev.filter((_, i) => i !== index));
-    setPreviews(prev => prev.filter((_, i) => i !== index));
+    const preview = previews[index];
+    if (preview) {
+      revokePreview(preview);
+    }
+    setSelectedFiles((prev) => prev.filter((_, i) => i !== index));
+    setPreviews((prev) => prev.filter((_, i) => i !== index));
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     if (submitState === 'submitting') return;
+
+    const nextErrors: { phone?: string; areaEstimate?: string } = {};
+    const normalizedPhone = phone.replace(/\D/g, '');
+    const trimmedAreaEstimate = areaEstimate.trim();
+
+    if (normalizedPhone.length < 10 || normalizedPhone.length > 15) {
+      nextErrors.phone = 'No Handphone harus 10-15 digit angka.';
+    }
+
+    if (!/^\d+$/.test(trimmedAreaEstimate)) {
+      nextErrors.areaEstimate = 'Perkiraan Luas wajib angka (contoh: 2500).';
+    }
+
+    setRequestErrors(nextErrors);
+    if (Object.keys(nextErrors).length > 0) {
+      setSubmitState('error');
+      setSubmitMessage('Periksa kembali data yang diisi.');
+      return;
+    }
 
     setSubmitState('submitting');
     setSubmitMessage('');
@@ -177,9 +232,9 @@ export default function Contact() {
       formData.append('name', name);
       formData.append('company', company);
       formData.append('email', email);
+      formData.append('phone', normalizedPhone);
       formData.append('project_location', projectLocation);
-      formData.append('area_estimate', areaEstimate);
-      formData.append('timeline', timeline);
+      formData.append('area_estimate', trimmedAreaEstimate);
       formData.append('project_description', projectDescription);
       selectedFiles.forEach((file) => {
         formData.append('project_images[]', file);
@@ -208,12 +263,12 @@ export default function Contact() {
       setName('');
       setCompany('');
       setEmail('');
+      setPhone('');
       setProjectLocation('');
       setAreaEstimate('');
-      setTimeline('');
       setProjectDescription('');
-      setSelectedFiles([]);
-      setPreviews([]);
+      resetSelectedFiles();
+      setRequestErrors({});
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Terjadi kesalahan saat mengirim.';
       setSubmitState('error');
@@ -301,6 +356,28 @@ export default function Contact() {
                   />
                 </div>
                 <div>
+                  <label className="text-sm font-medium text-slate-600">No Handphone</label>
+                  <input 
+                    type="tel" 
+                    required
+                    name="phone"
+                    value={phone}
+                    onChange={(e) => {
+                      setPhone(e.target.value);
+                      if (requestErrors.phone) {
+                        setRequestErrors((prev) => ({ ...prev, phone: undefined }));
+                      }
+                    }}
+                    className="mt-1 w-full rounded-2xl border border-slate-200 px-4 py-3 focus:border-brand focus:ring-brand" 
+                    placeholder="08xxxxxxxxxx"
+                  />
+                  {requestErrors.phone && (
+                    <p className="mt-1 text-xs text-rose-500">{requestErrors.phone}</p>
+                  )}
+                </div>
+              </div>
+              <div className="grid sm:grid-cols-2 gap-4">
+                <div>
                   <label className="text-sm font-medium text-slate-600">Lokasi Proyek</label>
                   <input 
                     type="text" 
@@ -312,39 +389,31 @@ export default function Contact() {
                     placeholder="Kota / Area"
                   />
                 </div>
-              </div>
-              <div className="grid sm:grid-cols-2 gap-4">
                 <div>
                   <label className="text-sm font-medium text-slate-600">Perkiraan Luas</label>
-                  <select 
-                    required
-                    name="area_estimate"
-                    value={areaEstimate}
-                    onChange={(e) => setAreaEstimate(e.target.value)}
-                    className="mt-1 w-full rounded-2xl border border-slate-200 px-4 py-3 focus:border-brand focus:ring-brand"
-                  >
-                    <option value="">Pilih luas</option>
-                    <option>&lt; 300 m²</option>
-                    <option>300 – 1.000 m²</option>
-                    <option>1.000 – 5.000 m²</option>
-                    <option>&gt; 5.000 m²</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="text-sm font-medium text-slate-600">Timeline</label>
-                  <select 
-                    required
-                    name="timeline"
-                    value={timeline}
-                    onChange={(e) => setTimeline(e.target.value)}
-                    className="mt-1 w-full rounded-2xl border border-slate-200 px-4 py-3 focus:border-brand focus:ring-brand"
-                  >
-                    <option value="">Pilih timeline</option>
-                    <option>Segera</option>
-                    <option>1 – 3 bulan</option>
-                    <option>3 – 6 bulan</option>
-                    <option>&gt; 6 bulan</option>
-                  </select>
+                  <div className="relative mt-1">
+                    <input
+                      type="text"
+                      inputMode="numeric"
+                      required
+                      name="area_estimate"
+                      value={areaEstimate}
+                      onChange={(e) => {
+                        setAreaEstimate(e.target.value);
+                        if (requestErrors.areaEstimate) {
+                          setRequestErrors((prev) => ({ ...prev, areaEstimate: undefined }));
+                        }
+                      }}
+                      className="w-full rounded-2xl border border-slate-200 px-4 py-3 pr-12 focus:border-brand focus:ring-brand"
+                      placeholder="2500"
+                    />
+                    <span className="pointer-events-none absolute inset-y-0 right-4 flex items-center text-sm text-slate-500">
+                      m2
+                    </span>
+                  </div>
+                  {requestErrors.areaEstimate && (
+                    <p className="mt-1 text-xs text-rose-500">{requestErrors.areaEstimate}</p>
+                  )}
                 </div>
               </div>
               <div>
@@ -360,22 +429,22 @@ export default function Contact() {
                 ></textarea>
               </div>
               
-              {/* Upload Gambar */}
+              {/* Upload Lampiran */}
               <div>
-                <label className="text-sm font-medium text-slate-600">Gambar Proyek (Opsional)</label>
+                <label className="text-sm font-medium text-slate-600">Lampiran Proyek (Opsional)</label>
                 <div className="mt-2 border-2 border-dashed border-gray-300 rounded-xl p-4 text-center hover:border-blue-400 transition-colors duration-300">
                   <div className="mb-3">
                     <svg className="w-8 h-8 text-gray-400 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
                     </svg>
-                    <p className="text-sm text-gray-600 mb-1">Tambahkan gambar proyek (maks. 5 gambar)</p>
-                    <p className="text-xs text-gray-500">Format: JPG, PNG, GIF (Maks. 5MB per file)</p>
+                    <p className="text-sm text-gray-600 mb-1">Tambahkan lampiran proyek (maks. 5 file)</p>
+                    <p className="text-xs text-gray-500">Format: JPG, PNG, PDF, DWG, DXF (Maks. 5MB per file)</p>
                   </div>
                   
                   <input
                     type="file"
                     multiple
-                    accept="image/*"
+                    accept=".jpg,.jpeg,.png,.pdf,.dwg,.dxf,image/jpeg,image/png,application/pdf"
                     onChange={handleFileSelect}
                     className="hidden"
                     id="project-images"
@@ -388,25 +457,34 @@ export default function Contact() {
                     <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                     </svg>
-                    Pilih Gambar
+                    Pilih File
                   </label>
                 </div>
                 
-                {/* Preview Gambar */}
+                {/* Preview Lampiran */}
                 {previews.length > 0 && (
                   <div className="mt-4">
-                    <p className="text-sm font-medium text-slate-600 mb-2">Preview ({previews.length} gambar)</p>
+                    <p className="text-sm font-medium text-slate-600 mb-2">Preview ({previews.length} file)</p>
                     <div className="grid grid-cols-3 sm:grid-cols-4 gap-3">
                       {previews.map((preview, index) => (
                         <div key={index} className="relative group">
-                          <div className="aspect-square rounded-lg overflow-hidden border border-gray-200">
-                            <img
-                              src={preview}
-                              alt={`Preview ${index + 1}`}
-                              className="w-full h-full object-cover"
-                            />
+                          <div className="aspect-square rounded-lg overflow-hidden border border-gray-200 bg-slate-50">
+                            {preview.kind === 'image' && preview.src ? (
+                              <img
+                                src={preview.src}
+                                alt={`Preview ${index + 1}`}
+                                className="w-full h-full object-cover"
+                              />
+                            ) : (
+                              <div className="flex h-full w-full flex-col items-center justify-center px-2 text-center">
+                                <FileDown className="h-6 w-6 text-slate-500" />
+                                <p className="mt-1 text-[11px] font-medium text-slate-700 line-clamp-2">{preview.name}</p>
+                                <p className="text-[10px] uppercase tracking-[0.15em] text-slate-500">{preview.ext || 'file'}</p>
+                              </div>
+                            )}
                           </div>
                           <button
+                            type="button"
                             onClick={() => removeFile(index)}
                             className="absolute -top-2 -right-2 w-5 h-5 bg-red-500 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200 hover:bg-red-600 text-xs"
                           >

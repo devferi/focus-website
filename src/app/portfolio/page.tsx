@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
-import { useEffect, useMemo, useState } from 'react';
+import { Suspense, useEffect, useMemo, useState } from 'react';
 
 import Footer from '@/components/Footer';
 import { findSectorLabelBySlug, SECTOR_OPTIONS, slugifySector } from '@/data/sectors';
@@ -38,7 +38,7 @@ const getPrimaryImage = (images?: ProjectImage[]) => {
   return resolveImageUrl(primary.image_url ?? primary.image);
 };
 
-export default function PortfolioPage() {
+function PortfolioPageContent() {
   const [projects, setProjects] = useState<Project[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const searchParams = useSearchParams();
@@ -159,5 +159,24 @@ export default function PortfolioPage() {
       </main>
       <Footer />
     </>
+  );
+}
+
+export default function PortfolioPage() {
+  return (
+    <Suspense
+      fallback={
+        <>
+          <main className="min-h-screen bg-slate-50 pt-28 pb-20">
+            <section className="mx-auto max-w-6xl px-4">
+              <p className="text-sm text-slate-500 py-12 text-center">Memuat portfolio...</p>
+            </section>
+          </main>
+          <Footer />
+        </>
+      }
+    >
+      <PortfolioPageContent />
+    </Suspense>
   );
 }
