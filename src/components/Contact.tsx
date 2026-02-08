@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Facebook, Instagram, Youtube, Linkedin, FileDown } from 'lucide-react';
+import { Facebook, Instagram, FileDown } from 'lucide-react';
 
 function WhatsAppIcon({ className = "w-4 h-4" }: { className?: string }) {
   return (
@@ -256,19 +256,6 @@ export default function Contact() {
                   <span className="font-medium">Focus Trading Contractor</span>
                 </a>
 
-                <a href="https://www.youtube.com/watch?v=9avT5NN0cmk" target="_blank" className="flex items-center gap-3 text-white/90 hover:text-white" rel="noreferrer">
-                  <span className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-white/10 text-white border border-white/20">
-                    <Youtube className="w-6 h-6" />
-                  </span>
-                  <span className="font-medium">Company Profile</span>
-                </a>
-
-                <a href="https://id.linkedin.com/in/focus-trading-contractor-cv-854991103" target="_blank" className="flex items-center gap-3 text-white/90 hover:text-white" rel="noreferrer">
-                  <span className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-white/10 text-white border border-white/20">
-                    <Linkedin className="w-6 h-6" />
-                  </span>
-                  <span className="font-medium">LinkedIn Profile</span>
-                </a>
               </div>
             </div>
           </div>
