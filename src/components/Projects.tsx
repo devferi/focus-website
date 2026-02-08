@@ -1,26 +1,20 @@
 'use client';
 
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
-type ProjectImage = {
+type FeaturedWorkApiItem = {
   id: number;
+  sector_slug: string;
+  sector_label: string;
+  title: string;
+  description: string;
+  cta_label?: string;
+  cta_url?: string;
   image?: string;
   image_url?: string;
   sort_order?: number;
-};
-
-type Project = {
-  id: number;
-  title: string;
-  sector: string;
-  location: string;
-  status: string;
-  description: string;
-  badge: string;
-  sort_order?: number;
   is_active?: boolean;
-  images?: ProjectImage[];
 };
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE ?? 'http://127.0.0.1:8000';
@@ -32,32 +26,37 @@ const resolveImageUrl = (path?: string) => {
   return `${API_BASE}/${path}`;
 };
 
-const getPrimaryImage = (images?: ProjectImage[]) => {
-  if (!images || images.length === 0) return '';
-  const sorted = [...images].sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0));
-  const primary = sorted[0];
-  return resolveImageUrl(primary.image_url ?? primary.image);
-};
-
 export default function Projects() {
-  const [projects, setProjects] = useState<Project[]>([]);
+  const [featuredItems, setFeaturedItems] = useState<FeaturedWorkApiItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [hasLoadError, setHasLoadError] = useState(false);
 
   useEffect(() => {
     const controller = new AbortController();
 
-    const loadProjects = async () => {
+    const loadFeaturedWork = async () => {
       try {
-        const response = await fetch(`${API_BASE}/api/projects`, {
+        setHasLoadError(false);
+        const response = await fetch(`${API_BASE}/api/featured-work`, {
           signal: controller.signal,
         });
-        if (!response.ok) throw new Error('Failed to load projects');
+        if (!response.ok) throw new Error('Failed to load featured work');
         const payload = await response.json();
         const items = Array.isArray(payload?.data) ? payload.data : [];
-        setProjects(items.filter((item: Project) => item.is_active !== false));
+        setFeaturedItems(
+          items
+            .filter((item: FeaturedWorkApiItem) => item.is_active !== false)
+            .sort((a: FeaturedWorkApiItem, b: FeaturedWorkApiItem) => {
+              const sortA = a.sort_order ?? Number.MAX_SAFE_INTEGER;
+              const sortB = b.sort_order ?? Number.MAX_SAFE_INTEGER;
+              if (sortA !== sortB) return sortA - sortB;
+              return a.id - b.id;
+            })
+        );
       } catch {
         if (!controller.signal.aborted) {
-          setProjects([]);
+          setHasLoadError(true);
+          setFeaturedItems([]);
         }
       } finally {
         if (!controller.signal.aborted) {
@@ -66,12 +65,25 @@ export default function Projects() {
       }
     };
 
-    loadProjects();
+    loadFeaturedWork();
 
     return () => controller.abort();
   }, []);
 
-  const featuredProjects = projects.slice(0, 4);
+  const featuredCards = useMemo(
+    () =>
+      featuredItems.map((item) => ({
+        id: item.id,
+        sectorSlug: item.sector_slug,
+        sectorLabel: item.sector_label,
+        title: item.title,
+        description: item.description,
+        ctaLabel: item.cta_label || 'Lihat detail proyek',
+        ctaUrl: item.cta_url || `/portfolio?sector=${item.sector_slug}`,
+        imageSrc: resolveImageUrl(item.image_url ?? item.image),
+      })),
+    [featuredItems]
+  );
 
   return (
     <section id="projects" className="py-20 bg-brand-dark text-white">
@@ -97,43 +109,50 @@ export default function Projects() {
         <div className="mt-10 grid md:grid-cols-2 gap-6">
           {isLoading && (
             <div className="col-span-full text-sm text-white/70 text-center py-10">
-              Memuat proyek...
+              Memuat gambar proyek...
             </div>
           )}
-          {!isLoading && featuredProjects.length === 0 && (
+          {hasLoadError && !isLoading && (
             <div className="col-span-full text-sm text-white/70 text-center py-10">
-              Belum ada proyek unggulan.
+              Data featured work belum tersedia.
             </div>
           )}
-          {!isLoading && featuredProjects.map((project) => {
-            const primaryImage = getPrimaryImage(project.images);
-
-            return (
-              <article
-                key={project.id}
-                className="project-card group rounded-[28px] border border-white/15 bg-white/5 backdrop-blur px-6 pt-6 pb-5"
+          {!isLoading && !hasLoadError && featuredCards.length === 0 && (
+            <div className="col-span-full text-sm text-white/70 text-center py-10">
+              Belum ada featured work aktif.
+            </div>
+          )}
+          {featuredCards.map((item) => (
+            <article
+              key={item.id}
+              className="project-card group rounded-[28px] border border-white/15 bg-white/5 backdrop-blur px-6 pt-6 pb-5"
+            >
+              <div className="overflow-hidden rounded-2xl">
+                {item.imageSrc ? (
+                  <img
+                    src={item.imageSrc}
+                    alt={item.title}
+                    className="h-64 w-full object-cover transition duration-500 group-hover:scale-105"
+                  />
+                ) : (
+                  <div className="h-64 w-full bg-white/10 flex items-center justify-center text-xs text-white/60">
+                    Gambar belum tersedia
+                  </div>
+                )}
+              </div>
+              <div className="project-meta mt-5 flex items-center justify-between text-xs uppercase tracking-[0.2em] text-white/60">
+                <span>{item.sectorLabel}</span>
+              </div>
+              <h3 className="mt-2 text-2xl font-semibold">{item.title}</h3>
+              <p className="project-desc mt-2 text-sm text-white/70">{item.description}</p>
+              <Link
+                href={item.ctaUrl}
+                className="mt-4 inline-flex items-center text-sm font-semibold text-accent hover:text-accent/90"
               >
-                <div className="overflow-hidden rounded-2xl">
-                  {primaryImage ? (
-                    <img
-                      src={primaryImage}
-                      alt={project.title}
-                      className="h-64 w-full object-cover transition duration-500 group-hover:scale-105"
-                    />
-                  ) : (
-                    <div className="h-64 w-full bg-white/10 flex items-center justify-center text-xs text-white/60">
-                      Gambar belum tersedia
-                    </div>
-                  )}
-                </div>
-                <div className="project-meta mt-5 flex items-center justify-between text-xs uppercase tracking-[0.2em] text-white/60">
-                  <span>{project.sector}</span>
-                </div>
-                <h3 className="mt-2 text-2xl font-semibold">{project.title}</h3>
-                <p className="project-desc mt-2 text-sm text-white/70 line-clamp-3">{project.description}</p>
-              </article>
-            );
-          })}
+                {item.ctaLabel}
+              </Link>
+            </article>
+          ))}
         </div>
       </div>
     </section>
