@@ -1,7 +1,6 @@
 'use client';
 
 import Image from 'next/image';
-import Link from 'next/link';
 import { useState, useEffect } from 'react';
 
 type FeaturedProject = {
@@ -113,20 +112,6 @@ export default function Hero() {
             <p className="mt-4 text-lg text-white/80 max-w-xl">
               Perusahaan jasa yang bergerak di bidang Design and Build, Acoustic Installation, Finishing & Infrastructure yang fokus pada hasil terbaik untuk setiap kolaborasi.
             </p>
-            <div className="mt-8 flex flex-wrap items-center gap-4 hero-cta">
-              <a href="#contact" className="rounded-2xl bg-accent px-6 py-3 text-sm font-semibold text-white shadow-soft">
-                Get a Quote
-              </a>
-              <a href="#projects" className="rounded-2xl border border-white/30 px-6 py-3 text-sm font-semibold text-white/90 hover:text-white hover:border-white">
-                Portofolio Proyek
-              </a>
-            </div>
-            <div className="mt-8 flex flex-wrap gap-3 text-sm text-white/80 hero-tags">
-              <Link href="/?sector=design-and-build#projects" className="rounded-full border border-white/30 px-4 py-2 hover:bg-white/10 transition-colors">Design and Build</Link>
-              <Link href="/?sector=finishing-contractor#projects" className="rounded-full border border-white/30 px-4 py-2 hover:bg-white/10 transition-colors">Finishing Contractor</Link>
-              <Link href="/?sector=infrastructure-project#projects" className="rounded-full border border-white/30 px-4 py-2 hover:bg-white/10 transition-colors">Infrastructure Project</Link>
-              <Link href="/?sector=acoustic-project#projects" className="rounded-full border border-white/30 px-4 py-2 hover:bg-white/10 transition-colors">Acoustic Project</Link>
-            </div>
           </div>
           
           {/* Project Slider */}

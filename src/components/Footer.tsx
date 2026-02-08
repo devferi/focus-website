@@ -19,9 +19,9 @@ export default function Footer() {
             <p className="mt-2 text-white text-lg font-semibold">Design & Build • Acoustic Installation • Finishing & Infrastructure</p>
           </div>
           <div className="flex gap-4 text-sm">
-            <a href="#services" className="hover:text-white">Layanan</a>
-            <a href="#projects" className="hover:text-white">Portofolio</a>
-            <a href="#contact" className="hover:text-white">Kontak</a>
+            <Link href="/#services" className="hover:text-white">Layanan</Link>
+            <Link href="/#projects" className="hover:text-white">Portofolio</Link>
+            <Link href="/#contact" className="hover:text-white">Kontak</Link>
           </div>
         </div>
         <div className="flex flex-wrap items-center justify-between gap-4 py-6 text-sm">

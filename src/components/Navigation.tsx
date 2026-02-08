@@ -1,22 +1,30 @@
 'use client';
 
+import { usePathname, useRouter } from 'next/navigation';
 import { useState } from 'react';
 
 export default function Navigation() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const pathname = usePathname();
+  const router = useRouter();
 
-  const scrollToSection = (sectionId: string) => {
-    const element = document.getElementById(sectionId);
-    if (element) {
-      const headerOffset = 100; // Tinggi header + margin
-      const elementPosition = element.getBoundingClientRect().top;
-      const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
-      
-      window.scrollTo({
-        top: offsetPosition,
-        behavior: 'smooth'
-      });
+  const navigateToSection = (sectionId: string) => {
+    if (pathname === '/') {
+      const element = document.getElementById(sectionId);
+      if (element) {
+        const headerOffset = 100;
+        const elementPosition = element.getBoundingClientRect().top;
+        const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+
+        window.scrollTo({
+          top: offsetPosition,
+          behavior: 'smooth',
+        });
+        setIsMenuOpen(false);
+        return;
+      }
     }
+    router.push(`/#${sectionId}`);
     setIsMenuOpen(false);
   };
 
@@ -25,7 +33,7 @@ export default function Navigation() {
       <div className="mx-auto max-w-6xl px-4 pt-4">
         <div className="flex items-center justify-between rounded-2xl glass text-white border border-white/20 px-5 py-3 backdrop-blur-lg">
           <button 
-            onClick={() => scrollToSection('hero')} 
+            onClick={() => navigateToSection('hero')} 
             className="flex items-center gap-3"
           >
             <img 
@@ -37,25 +45,25 @@ export default function Navigation() {
           
           <nav className="hidden md:flex items-center gap-6 text-sm font-medium">
             <button 
-              onClick={() => scrollToSection('about')} 
+              onClick={() => navigateToSection('about')} 
               className="hover:text-accent transition"
             >
               About us
             </button>
             <button 
-              onClick={() => scrollToSection('projects')} 
+              onClick={() => navigateToSection('projects')} 
               className="hover:text-accent transition"
             >
               Projects
             </button>
             <button 
-              onClick={() => scrollToSection('news')} 
+              onClick={() => navigateToSection('news')} 
               className="hover:text-accent transition"
             >
               Update & News
             </button>
             <button 
-              onClick={() => scrollToSection('contact')} 
+              onClick={() => navigateToSection('contact')} 
               className="hover:text-accent transition"
             >
               Contact us
@@ -64,7 +72,7 @@ export default function Navigation() {
           
           <div className="hidden md:flex items-center gap-3">
             <button 
-              onClick={() => scrollToSection('contact')} 
+              onClick={() => navigateToSection('contact')} 
               className="inline-flex items-center gap-2 rounded-xl bg-accent px-4 py-2 text-sm font-semibold text-white shadow-soft hover:opacity-90"
             >
               Get A Quote
@@ -85,10 +93,10 @@ export default function Navigation() {
         {isMenuOpen && (
           <div className="md:hidden mt-2 mb-4 rounded-2xl glass border border-white/20 px-5 py-4 text-white text-sm">
             <nav className="grid gap-3">
-              <button onClick={() => scrollToSection('about')}>About us</button>
-              <button onClick={() => scrollToSection('projects')}>Projects</button>
-              <button onClick={() => scrollToSection('news')}>Update & News</button>
-              <button onClick={() => scrollToSection('contact')}>Contact us</button>
+              <button onClick={() => navigateToSection('about')}>About us</button>
+              <button onClick={() => navigateToSection('projects')}>Projects</button>
+              <button onClick={() => navigateToSection('news')}>Update & News</button>
+              <button onClick={() => navigateToSection('contact')}>Contact us</button>
             </nav>
             <a href="tel:+62318765432" className="mt-4 inline-flex items-center gap-2 rounded-xl bg-accent px-4 py-2 font-semibold text-white">
               Hubungi Kami

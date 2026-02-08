@@ -1,8 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useEffect, useMemo, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
 type ProjectImage = {
   id: number;
@@ -40,26 +39,9 @@ const getPrimaryImage = (images?: ProjectImage[]) => {
   return resolveImageUrl(primary.image_url ?? primary.image);
 };
 
-const slugify = (value: string) =>
-  value
-    .toLowerCase()
-    .replace(/&/g, 'and')
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/(^-|-$)/g, '');
-
-type ProjectsProps = {
-  initialSector?: string;
-};
-
-export default function Projects({ initialSector = '' }: ProjectsProps) {
-  const router = useRouter();
+export default function Projects() {
   const [projects, setProjects] = useState<Project[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [sectorFilter, setSectorFilter] = useState('');
-  const [locationFilter, setLocationFilter] = useState('');
-  const [statusFilter, setStatusFilter] = useState('');
-  const [currentPage, setCurrentPage] = useState(1);
-  const perPage = 4;
 
   useEffect(() => {
     const controller = new AbortController();
@@ -73,7 +55,7 @@ export default function Projects({ initialSector = '' }: ProjectsProps) {
         const payload = await response.json();
         const items = Array.isArray(payload?.data) ? payload.data : [];
         setProjects(items.filter((item: Project) => item.is_active !== false));
-      } catch (error) {
+      } catch {
         if (!controller.signal.aborted) {
           setProjects([]);
         }
@@ -89,124 +71,52 @@ export default function Projects({ initialSector = '' }: ProjectsProps) {
     return () => controller.abort();
   }, []);
 
-  const sectorOptions = useMemo(() => {
-    return Array.from(new Set(projects.map((item) => item.sector).filter(Boolean))).sort();
-  }, [projects]);
-
-  const locationOptions = useMemo(() => {
-    return Array.from(new Set(projects.map((item) => item.location).filter(Boolean))).sort();
-  }, [projects]);
-
-  const statusOptions = useMemo(() => {
-    return Array.from(new Set(projects.map((item) => item.status).filter(Boolean))).sort();
-  }, [projects]);
-
-  const filteredProjects = projects.filter(project => {
-    return (!sectorFilter || project.sector === sectorFilter) &&
-           (!locationFilter || project.location === locationFilter) &&
-           (!statusFilter || project.status === statusFilter);
-  });
-
-  const totalPages = Math.max(1, Math.ceil(filteredProjects.length / perPage));
-  const paginatedProjects = filteredProjects.slice(
-    (currentPage - 1) * perPage,
-    currentPage * perPage
-  );
-
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [sectorFilter, locationFilter, statusFilter, projects.length]);
-
-  // Sinkronkan sektor dari initialSector (query string dari server)
-  useEffect(() => {
-    if (!initialSector) return;
-    const matched = sectorOptions.find((option) => slugify(option) === initialSector);
-    const nextValue = matched ?? initialSector;
-    if (nextValue !== sectorFilter) {
-      setSectorFilter(nextValue);
-    }
-  }, [initialSector, sectorFilter, sectorOptions]);
+  const featuredProjects = projects.slice(0, 4);
 
   return (
     <section id="projects" className="py-20 bg-brand-dark text-white">
       <div className="mx-auto max-w-6xl px-4">
-        <div className="flex flex-wrap items-center justify-between gap-6">
+        <div className="flex flex-wrap items-end justify-between gap-6">
           <div>
             <p className="text-sm font-semibold tracking-[0.3em] text-white/60 uppercase">Featured Work</p>
             <h2 className="mt-3 text-3xl md:text-4xl font-bold">
               Our Signature Projects That Define Excellence
             </h2>
             <p className="mt-2 text-white/70 max-w-2xl">
-              A curated collection of our finest work spanning Design & Build, Finishing, Infrastructure, and Acoustic—showcasing the precision, creativity, and dedication that define our craftsmanship.
+              Highlights from our recent projects across design, finishing, infrastructure, and acoustic work.
             </p>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 text-xs filter-grid w-full">
-            <select 
-              value={sectorFilter} 
-              onChange={(e) => {
-                const value = e.target.value;
-                setSectorFilter(value);
-
-                // perbarui query string sehingga URL tetap mencerminkan filter saat ini
-                const params = new URLSearchParams(window.location.search);
-                if (value) params.set('sector', slugify(value));
-                else params.delete('sector');
-                const hash = window.location.hash ?? '';
-                const path = window.location.pathname + (params.toString() ? `?${params.toString()}` : '') + hash;
-                router.replace(path);
-              }}
-              className="rounded-2xl border border-white/20 bg-transparent px-4 py-2 focus:border-accent focus:ring-0 w-full"
-            >
-              <option value="">Jenis pekerjaan</option>
-              {sectorOptions.map((sector) => (
-                <option key={sector} value={sector}>{sector}</option>
-              ))}
-            </select>
-            <select 
-              value={locationFilter} 
-              onChange={(e) => setLocationFilter(e.target.value)}
-              className="rounded-2xl border border-white/20 bg-transparent px-4 py-2 focus:border-accent focus:ring-0 w-full"
-            >
-              <option value="">Lokasi</option>
-              {locationOptions.map((location) => (
-                <option key={location}>{location}</option>
-              ))}
-            </select>
-            <select 
-              value={statusFilter} 
-              onChange={(e) => setStatusFilter(e.target.value)}
-              className="rounded-2xl border border-white/20 bg-transparent px-4 py-2 focus:border-accent focus:ring-0 w-full"
-            >
-              <option value="">Label</option>
-              {statusOptions.map((status) => (
-                <option key={status}>{status}</option>
-              ))}
-            </select>
-          </div>
+          <Link
+            href="/portfolio"
+            className="inline-flex h-10 items-center rounded-full border border-white/30 px-5 text-sm font-medium text-white/90 hover:text-white hover:bg-white/10 hover:border-white/50 transition-colors"
+          >
+            Lihat Semua Portfolio
+          </Link>
         </div>
+
         <div className="mt-10 grid md:grid-cols-2 gap-6">
           {isLoading && (
             <div className="col-span-full text-sm text-white/70 text-center py-10">
               Memuat proyek...
             </div>
           )}
-          {!isLoading && filteredProjects.length === 0 && (
+          {!isLoading && featuredProjects.length === 0 && (
             <div className="col-span-full text-sm text-white/70 text-center py-10">
-              Belum ada proyek yang sesuai.
+              Belum ada proyek unggulan.
             </div>
           )}
-          {!isLoading && paginatedProjects.map((project) => {
+          {!isLoading && featuredProjects.map((project) => {
             const primaryImage = getPrimaryImage(project.images);
 
             return (
-              <article 
-                key={project.id} 
-                className="project-card group rounded-[28px] border border-white/15 bg-white/5 backdrop-blur px-6 pt-6 pb-5 focus:outline-none focus:ring-2 focus:ring-accent"
+              <article
+                key={project.id}
+                className="project-card group rounded-[28px] border border-white/15 bg-white/5 backdrop-blur px-6 pt-6 pb-5"
               >
                 <div className="overflow-hidden rounded-2xl">
                   {primaryImage ? (
-                    <img 
-                      src={primaryImage} 
+                    <img
+                      src={primaryImage}
                       alt={project.title}
                       className="h-64 w-full object-cover transition duration-500 group-hover:scale-105"
                     />
@@ -217,50 +127,14 @@ export default function Projects({ initialSector = '' }: ProjectsProps) {
                   )}
                 </div>
                 <div className="project-meta mt-5 flex items-center justify-between text-xs uppercase tracking-[0.2em] text-white/60">
-                  <span>{project.sector} • {project.location}</span>
-                  <span>{project.status}</span>
+                  <span>{project.sector}</span>
                 </div>
                 <h3 className="mt-2 text-2xl font-semibold">{project.title}</h3>
                 <p className="project-desc mt-2 text-sm text-white/70 line-clamp-3">{project.description}</p>
-                <div className="mt-4 flex items-center gap-2 text-xs">
-                  <span className="badge-status rounded-full bg-emerald-400/20 text-emerald-200 px-3 py-1">
-                    {project.badge}
-                  </span>
-                  <Link
-                    href={`/projects/${project.id}`}
-                    className="badge-kpi rounded-full bg-white/10 px-3 py-1 hover:bg-white/20 transition-colors"
-                    aria-label={`Lihat detail ${project.title}`}
-                  >
-                    Lihat detail
-                  </Link>
-                </div>
               </article>
             );
           })}
         </div>
-        {!isLoading && totalPages > 1 && (
-          <div className="mt-10 flex items-center justify-center gap-2 text-sm">
-            <button
-              type="button"
-              onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
-              className="rounded-full border border-white/20 px-4 py-2 text-white/80 hover:text-white hover:border-white/40 transition-colors disabled:opacity-40"
-              disabled={currentPage === 1}
-            >
-              Prev
-            </button>
-            <span className="px-3 text-white/70">
-              {currentPage} / {totalPages}
-            </span>
-            <button
-              type="button"
-              onClick={() => setCurrentPage((prev) => Math.min(totalPages, prev + 1))}
-              className="rounded-full border border-white/20 px-4 py-2 text-white/80 hover:text-white hover:border-white/40 transition-colors disabled:opacity-40"
-              disabled={currentPage === totalPages}
-            >
-              Next
-            </button>
-          </div>
-        )}
       </div>
     </section>
   );
