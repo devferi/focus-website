@@ -23,6 +23,7 @@ export default function ProjectRequestForm() {
   const [phone, setPhone] = useState('');
   const [projectLocation, setProjectLocation] = useState('');
   const [areaEstimate, setAreaEstimate] = useState('');
+  const [areaUnit, setAreaUnit] = useState<'m1' | 'm2' | 'm3'>('m2');
   const [projectDescription, setProjectDescription] = useState('');
   const [submitState, setSubmitState] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
   const [submitMessage, setSubmitMessage] = useState('');
@@ -126,6 +127,7 @@ export default function ProjectRequestForm() {
       formData.append('phone', normalizedPhone);
       formData.append('project_location', projectLocation);
       formData.append('area_estimate', trimmedAreaEstimate);
+      formData.append('area_unit', areaUnit);
       formData.append('project_description', projectDescription);
       selectedFiles.forEach((file) => {
         formData.append('project_images[]', file);
@@ -168,46 +170,46 @@ export default function ProjectRequestForm() {
   };
 
   return (
-    <div className="rounded-[32px] bg-white text-slate-900 p-8 shadow-soft">
+    <div className="rounded-[32px] border border-white/20 bg-white/5 text-white p-8 shadow-soft">
       <form onSubmit={handleSubmit} className="grid gap-4">
         <div>
-          <label className="text-sm font-medium text-slate-600">Nama</label>
+          <label className="text-sm font-semibold text-white">Nama :</label>
           <input 
             type="text" 
             required 
             name="name"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className="mt-1 w-full rounded-2xl border border-slate-200 px-4 py-3 focus:border-brand focus:ring-brand" 
-            placeholder="Nama lengkap"
+            className="mt-1 w-full rounded-2xl border border-white/20 bg-white/10 px-4 py-3 text-white placeholder-white/60 focus:border-white/40 focus:ring-white/40" 
+            placeholder="Nama anda"
           />
         </div>
         <div>
-          <label className="text-sm font-medium text-slate-600">Perusahaan</label>
+          <label className="text-sm font-semibold text-white">Perusahaan :</label>
           <input 
             type="text" 
             required
             name="company"
             value={company}
             onChange={(e) => setCompany(e.target.value)}
-            className="mt-1 w-full rounded-2xl border border-slate-200 px-4 py-3 focus:border-brand focus:ring-brand" 
-            placeholder="PT Anda"
+            className="mt-1 w-full rounded-2xl border border-white/20 bg-white/10 px-4 py-3 text-white placeholder-white/60 focus:border-white/40 focus:ring-white/40" 
+            placeholder="Nama Instansi"
           />
         </div>
         <div>
-          <label className="text-sm font-medium text-slate-600">Email</label>
+          <label className="text-sm font-semibold text-white">Email :</label>
           <input 
             type="email" 
             required 
             name="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="mt-1 w-full rounded-2xl border border-slate-200 px-4 py-3 focus:border-brand focus:ring-brand" 
+            className="mt-1 w-full rounded-2xl border border-white/20 bg-white/10 px-4 py-3 text-white placeholder-white/60 focus:border-white/40 focus:ring-white/40" 
             placeholder="email@perusahaan.com"
           />
         </div>
         <div>
-          <label className="text-sm font-medium text-slate-600">No Handphone</label>
+          <label className="text-sm font-semibold text-white">No WhatsApp :</label>
           <input 
             type="tel" 
             required
@@ -219,28 +221,28 @@ export default function ProjectRequestForm() {
                 setRequestErrors((prev) => ({ ...prev, phone: undefined }));
               }
             }}
-            className="mt-1 w-full rounded-2xl border border-slate-200 px-4 py-3 focus:border-brand focus:ring-brand" 
+            className="mt-1 w-full rounded-2xl border border-white/20 bg-white/10 px-4 py-3 text-white placeholder-white/60 focus:border-white/40 focus:ring-white/40" 
             placeholder="08xxxxxxxxxx"
           />
           {requestErrors.phone && (
-            <p className="mt-1 text-xs text-rose-500">{requestErrors.phone}</p>
+            <p className="mt-1 text-xs text-rose-200">{requestErrors.phone}</p>
           )}
         </div>
         <div>
-          <label className="text-sm font-medium text-slate-600">Lokasi Proyek</label>
+          <label className="text-sm font-semibold text-white">Lokasi Proyek :</label>
           <input 
             type="text" 
             required
             name="project_location"
             value={projectLocation}
             onChange={(e) => setProjectLocation(e.target.value)}
-            className="mt-1 w-full rounded-2xl border border-slate-200 px-4 py-3 focus:border-brand focus:ring-brand" 
+            className="mt-1 w-full rounded-2xl border border-white/20 bg-white/10 px-4 py-3 text-white placeholder-white/60 focus:border-white/40 focus:ring-white/40" 
             placeholder="Kota / Area"
           />
         </div>
         <div>
-          <label className="text-sm font-medium text-slate-600">Perkiraan Luas</label>
-          <div className="relative mt-1">
+          <label className="text-sm font-semibold text-white">Perkiraan Luas :</label>
+          <div className="mt-1 flex items-center gap-2">
             <input
               type="text"
               inputMode="numeric"
@@ -253,39 +255,46 @@ export default function ProjectRequestForm() {
                   setRequestErrors((prev) => ({ ...prev, areaEstimate: undefined }));
                 }
               }}
-              className="w-full rounded-2xl border border-slate-200 px-4 py-3 pr-12 focus:border-brand focus:ring-brand"
+              className="w-40 sm:w-48 rounded-2xl border border-white/20 bg-white/10 px-4 py-3 text-white placeholder-white/60 focus:border-white/40 focus:ring-white/40"
               placeholder="2500"
             />
-            <span className="pointer-events-none absolute inset-y-0 right-4 flex items-center text-sm text-slate-500">
-              m2
-            </span>
+            <select
+              value={areaUnit}
+              onChange={(e) => setAreaUnit(e.target.value as 'm1' | 'm2' | 'm3')}
+              className="h-10 rounded-2xl border border-white/20 bg-white/10 px-3 text-sm text-white focus:border-white/40 focus:ring-white/40"
+              aria-label="Satuan luas"
+            >
+              <option value="m1">m1</option>
+              <option value="m2">m²</option>
+              <option value="m3">m3</option>
+            </select>
           </div>
           {requestErrors.areaEstimate && (
-            <p className="mt-1 text-xs text-rose-500">{requestErrors.areaEstimate}</p>
+            <p className="mt-1 text-xs text-rose-200">{requestErrors.areaEstimate}</p>
           )}
         </div>
         <div>
-          <label className="text-sm font-medium text-slate-600">Deskripsi Proyek</label>
+          <label className="text-sm font-semibold text-white">Deskripsi Proyek :</label>
           <textarea 
             rows={4} 
             required
             name="project_description"
             value={projectDescription}
             onChange={(e) => setProjectDescription(e.target.value)}
-            className="mt-1 w-full rounded-2xl border border-slate-200 px-4 py-3 focus:border-brand focus:ring-brand" 
+            className="mt-1 w-full rounded-2xl border border-white/20 bg-white/10 px-4 py-3 text-white placeholder-white/60 focus:border-white/40 focus:ring-white/40" 
             placeholder="Ruang lingkup, kebutuhan khusus, standar internal"
           ></textarea>
         </div>
         
         <div>
-          <label className="text-sm font-medium text-slate-600">Lampiran Proyek (Opsional)</label>
-          <div className="mt-2 border-2 border-dashed border-gray-300 rounded-xl p-4 text-center hover:border-blue-400 transition-colors duration-300">
+          <label className="text-sm font-semibold text-white">Lampiran Proyek (Opsional) :</label>
+          <div className="mt-2 border-2 border-dashed border-white/20 rounded-xl p-4 text-center hover:border-white/40 transition-colors duration-300">
             <div className="mb-3">
-              <svg className="w-8 h-8 text-gray-400 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-8 h-8 text-white/60 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
               </svg>
-              <p className="text-sm text-gray-600 mb-1">Tambahkan lampiran proyek (maks. 5 file)</p>
-              <p className="text-xs text-gray-500">Format: JPG, PNG, PDF, DWG, DXF (Maks. 5MB per file)</p>
+              <p className="text-sm text-white/80 mb-1">Tambahkan lampiran proyek (maks. 5 file)</p>
+              <p className="text-xs text-white/60">Format: JPG, PDF, DWG, Autocad (Maks. 5MB per file)</p>
             </div>
             
             <input
@@ -299,7 +308,7 @@ export default function ProjectRequestForm() {
             
             <label
               htmlFor="project-images"
-              className="inline-flex items-center px-4 py-2 bg-gray-100 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-200 transition-colors duration-200 cursor-pointer"
+              className="inline-flex items-center px-4 py-2 bg-white/10 text-white text-sm font-medium rounded-lg hover:bg-white/20 transition-colors duration-200 cursor-pointer"
             >
               <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
@@ -310,11 +319,11 @@ export default function ProjectRequestForm() {
           
           {previews.length > 0 && (
             <div className="mt-4">
-              <p className="text-sm font-medium text-slate-600 mb-2">Preview ({previews.length} file)</p>
+              <p className="text-sm font-medium text-white/80 mb-2">Preview ({previews.length} file)</p>
               <div className="grid grid-cols-3 sm:grid-cols-4 gap-3">
                 {previews.map((preview, index) => (
                   <div key={index} className="relative group">
-                    <div className="aspect-square rounded-lg overflow-hidden border border-gray-200 bg-slate-50">
+                    <div className="aspect-square rounded-lg overflow-hidden border border-white/10 bg-white/5">
                       {preview.kind === 'image' && preview.src ? (
                         <img
                           src={preview.src}
@@ -323,9 +332,9 @@ export default function ProjectRequestForm() {
                         />
                       ) : (
                         <div className="flex h-full w-full flex-col items-center justify-center px-2 text-center">
-                          <FileDown className="h-6 w-6 text-slate-500" />
-                          <p className="mt-1 text-[11px] font-medium text-slate-700 line-clamp-2">{preview.name}</p>
-                          <p className="text-[10px] uppercase tracking-[0.15em] text-slate-500">{preview.ext || 'file'}</p>
+                          <FileDown className="h-6 w-6 text-white/70" />
+                          <p className="mt-1 text-[11px] font-medium text-white/90 line-clamp-2">{preview.name}</p>
+                          <p className="text-[10px] uppercase tracking-[0.15em] text-white/60">{preview.ext || 'file'}</p>
                         </div>
                       )}
                     </div>
@@ -348,8 +357,8 @@ export default function ProjectRequestForm() {
           <div
             className={`rounded-xl px-4 py-3 text-sm ${
               submitState === 'success'
-                ? 'bg-emerald-50 text-emerald-700'
-                : 'bg-rose-50 text-rose-700'
+                ? 'bg-emerald-500/10 text-emerald-200'
+                : 'bg-rose-500/10 text-rose-200'
             }`}
           >
             {submitMessage}
@@ -357,7 +366,7 @@ export default function ProjectRequestForm() {
         )}
         <button 
           type="submit"
-          className="rounded-2xl bg-brand px-6 py-3 text-white font-semibold hover:bg-brand/90 disabled:opacity-70"
+          className="rounded-2xl bg-accent px-6 py-3 text-white font-semibold hover:opacity-90 disabled:opacity-70"
           disabled={submitState === 'submitting'}
         >
           {submitState === 'submitting' ? 'Mengirim...' : 'Kirim Permintaan'}
