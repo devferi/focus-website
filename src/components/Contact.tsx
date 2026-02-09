@@ -173,7 +173,7 @@ export default function Contact() {
             <form onSubmit={handleCompanyProfileSubmit} className="grid gap-4">
               <div>
                 <p className="text-lg font-bold text-white text-center">Unduh Company Profile</p>
-                <p className="mt-1 text-xs text-white/70 text-center whitespace-nowrap">Isi data singkat di bawah ini untuk mengunduh dokumen resmi perusahaan.</p>
+                <p className="mt-1 text-xs text-white/70 text-center sm:whitespace-nowrap">Isi data singkat di bawah ini untuk mengunduh dokumen resmi perusahaan.</p>
               </div>
               <div>
                 <label className="text-sm font-semibold text-white">Nama :</label>
