@@ -293,6 +293,13 @@ export default function Contact() {
               <p className="font-semibold text-lg">CV. Focus Trading Contractor</p>
               <p className="text-white/70 mt-2">Design and Build, Acoustic Installation, Finishing & Infrastructure sejak 2011.</p>
               <div className="mt-4 space-y-2">
+                <a href="tel:+62317425366" className="flex items-center gap-3 text-white/90 hover:text-white">
+                  <span className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-white/10 text-white border border-white/20">
+                    <img src="/telephone_icon_white.svg" alt="Telephone" className="w-6 h-6" />
+                  </span>
+                  <span className="font-medium">+6231 7425 366</span>
+                </a>
+
                 <a href="https://wa.me/6281229750999" target="_blank" className="flex items-center gap-3 text-white/90 hover:text-white" rel="noreferrer">
                   <span className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-white/10 text-white border border-white/20">
                     <WhatsAppIcon className="w-6 h-6" />
