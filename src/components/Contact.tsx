@@ -18,64 +18,36 @@ function WhatsAppIcon({ className = "w-4 h-4" }: { className?: string }) {
 }
 
 export default function Contact() {
-  type FilePreview = {
-    kind: 'image' | 'file';
-    src?: string;
-    name: string;
-    ext: string;
-  };
-
-  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
-  const [previews, setPreviews] = useState<FilePreview[]>([]);
-  const [name, setName] = useState('');
-  const [company, setCompany] = useState('');
-  const [email, setEmail] = useState('');
-  const [phone, setPhone] = useState('');
-  const [projectLocation, setProjectLocation] = useState('');
-  const [areaEstimate, setAreaEstimate] = useState('');
-  const [projectDescription, setProjectDescription] = useState('');
-  const [submitState, setSubmitState] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
-  const [submitMessage, setSubmitMessage] = useState('');
-  const [requestErrors, setRequestErrors] = useState<{ phone?: string; areaEstimate?: string }>({});
   const [cpName, setCpName] = useState('');
-  const [cpPhone, setCpPhone] = useState('');
-  const [cpCompanyPhone, setCpCompanyPhone] = useState('');
-  const [cpDomisili, setCpDomisili] = useState('');
+  const [cpCompanyName, setCpCompanyName] = useState('');
+  const [cpWhatsapp, setCpWhatsapp] = useState('');
+  const [cpCity, setCpCity] = useState('');
   const [cpStatus, setCpStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
   const [cpMessage, setCpMessage] = useState('');
-  const [cpErrors, setCpErrors] = useState<{ name?: string; phone?: string; domicile?: string }>({});
+  const [cpErrors, setCpErrors] = useState<{ name?: string; companyName?: string; whatsapp?: string; city?: string }>({});
   const API_BASE = process.env.NEXT_PUBLIC_API_BASE ?? 'http://127.0.0.1:8000';
-  const maxFiles = 5;
-  const maxFileSize = 5 * 1024 * 1024;
-
-  const revokePreview = (preview: FilePreview) => {
-    if (preview.kind === 'image' && preview.src) {
-      URL.revokeObjectURL(preview.src);
-    }
-  };
-
-  const resetSelectedFiles = () => {
-    previews.forEach((preview) => revokePreview(preview));
-    setSelectedFiles([]);
-    setPreviews([]);
-  };
 
   const validateCompanyProfile = () => {
-    const nextErrors: { name?: string; phone?: string; domicile?: string } = {};
+    const nextErrors: { name?: string; companyName?: string; whatsapp?: string; city?: string } = {};
     const trimmedName = cpName.trim();
-    const trimmedDomisili = cpDomisili.trim();
-    const phoneDigits = cpPhone.replace(/\D/g, '');
+    const trimmedCompany = cpCompanyName.trim();
+    const trimmedCity = cpCity.trim();
+    const whatsappDigits = cpWhatsapp.replace(/\D/g, '');
 
     if (trimmedName.length < 2) {
       nextErrors.name = 'Nama minimal 2 karakter.';
     }
 
-    if (phoneDigits.length < 10 || phoneDigits.length > 15) {
-      nextErrors.phone = 'Nomor HP harus 10–15 digit.';
+    if (!trimmedCompany) {
+      nextErrors.companyName = 'Nama perusahaan wajib diisi.';
     }
 
-    if (!trimmedDomisili) {
-      nextErrors.domicile = 'Domisili wajib diisi.';
+    if (whatsappDigits.length < 10 || whatsappDigits.length > 15) {
+      nextErrors.whatsapp = 'Nomor WhatsApp harus 10–15 digit.';
+    }
+
+    if (!trimmedCity) {
+      nextErrors.city = 'Kota / Area wajib diisi.';
     }
 
     setCpErrors(nextErrors);
@@ -99,9 +71,9 @@ export default function Contact() {
     try {
       const payload = {
         name: cpName.trim(),
-        phone: cpPhone.replace(/\D/g, ''),
-        company_phone: cpCompanyPhone.trim(),
-        domicile: cpDomisili.trim(),
+        company_name: cpCompanyName.trim(),
+        whatsapp: cpWhatsapp.replace(/\D/g, ''),
+        city: cpCity.trim(),
       };
 
       const response = await fetch(`${API_BASE}/api/company-profile-downloads`, {
@@ -135,9 +107,9 @@ export default function Contact() {
       setCpStatus('success');
       setCpMessage('Berhasil! Mengunduh Company Profile...');
       setCpName('');
-      setCpPhone('');
-      setCpCompanyPhone('');
-      setCpDomisili('');
+      setCpCompanyName('');
+      setCpWhatsapp('');
+      setCpCity('');
       setCpErrors({});
 
       const link = document.createElement('a');
@@ -149,133 +121,6 @@ export default function Contact() {
       const message = error instanceof Error ? error.message : 'Terjadi kesalahan.';
       setCpStatus('error');
       setCpMessage(message);
-    }
-  };
-
-  const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const files = Array.from(event.target.files || []);
-    if (files.length === 0) return;
-
-    const allowedMimes = new Set(['image/jpeg', 'image/png', 'application/pdf']);
-    const allowedExtensions = new Set(['jpg', 'jpeg', 'png', 'pdf', 'dwg', 'dxf']);
-
-    const validFiles = files.filter((file) => {
-      const ext = file.name.split('.').pop()?.toLowerCase() ?? '';
-      const validType = allowedMimes.has(file.type) || allowedExtensions.has(ext);
-      const validSize = file.size <= maxFileSize;
-      return validType && validSize;
-    });
-
-    if (validFiles.length !== files.length) {
-      alert('Beberapa file tidak valid. Format: JPG, PNG, PDF, DWG, DXF (maks. 5MB per file).');
-    }
-
-    const availableSlots = Math.max(0, maxFiles - selectedFiles.length);
-    const limitedFiles = validFiles.slice(0, availableSlots);
-    if (limitedFiles.length < validFiles.length) {
-      alert(`Maksimal ${maxFiles} file. Hanya ${limitedFiles.length} file yang ditambahkan.`);
-    }
-
-    setSelectedFiles((prev) => [...prev, ...limitedFiles]);
-
-    const nextPreviews: FilePreview[] = limitedFiles.map((file) => {
-      const ext = file.name.split('.').pop()?.toLowerCase() ?? '';
-      const isImage = file.type.startsWith('image/') || ext === 'jpg' || ext === 'jpeg' || ext === 'png';
-
-      return {
-        kind: isImage ? 'image' : 'file',
-        src: isImage ? URL.createObjectURL(file) : undefined,
-        name: file.name,
-        ext,
-      };
-    });
-    setPreviews((prev) => [...prev, ...nextPreviews]);
-
-    event.target.value = '';
-  };
-
-  const removeFile = (index: number) => {
-    const preview = previews[index];
-    if (preview) {
-      revokePreview(preview);
-    }
-    setSelectedFiles((prev) => prev.filter((_, i) => i !== index));
-    setPreviews((prev) => prev.filter((_, i) => i !== index));
-  };
-
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
-    if (submitState === 'submitting') return;
-
-    const nextErrors: { phone?: string; areaEstimate?: string } = {};
-    const normalizedPhone = phone.replace(/\D/g, '');
-    const trimmedAreaEstimate = areaEstimate.trim();
-
-    if (normalizedPhone.length < 10 || normalizedPhone.length > 15) {
-      nextErrors.phone = 'No Handphone harus 10-15 digit angka.';
-    }
-
-    if (!/^\d+$/.test(trimmedAreaEstimate)) {
-      nextErrors.areaEstimate = 'Perkiraan Luas wajib angka (contoh: 2500).';
-    }
-
-    setRequestErrors(nextErrors);
-    if (Object.keys(nextErrors).length > 0) {
-      setSubmitState('error');
-      setSubmitMessage('Periksa kembali data yang diisi.');
-      return;
-    }
-
-    setSubmitState('submitting');
-    setSubmitMessage('');
-
-    try {
-      const formData = new FormData();
-      formData.append('name', name);
-      formData.append('company', company);
-      formData.append('email', email);
-      formData.append('phone', normalizedPhone);
-      formData.append('project_location', projectLocation);
-      formData.append('area_estimate', trimmedAreaEstimate);
-      formData.append('project_description', projectDescription);
-      selectedFiles.forEach((file) => {
-        formData.append('project_images[]', file);
-      });
-
-      const response = await fetch(`${API_BASE}/api/project-requests`, {
-        method: 'POST',
-        body: formData,
-      });
-
-      if (!response.ok) {
-        let errorMessage = 'Gagal mengirim permintaan. Coba lagi.';
-        try {
-          const payload = await response.json();
-          if (payload?.message) {
-            errorMessage = payload.message;
-          }
-        } catch {
-          // ignore parse errors
-        }
-        throw new Error(errorMessage);
-      }
-
-      setSubmitState('success');
-      setSubmitMessage('Terima kasih! Permintaan Anda sudah kami terima.');
-      setName('');
-      setCompany('');
-      setEmail('');
-      setPhone('');
-      setProjectLocation('');
-      setAreaEstimate('');
-      setProjectDescription('');
-      resetSelectedFiles();
-      setRequestErrors({});
-    } catch (error) {
-      const message = error instanceof Error ? error.message : 'Terjadi kesalahan saat mengirim.';
-      setSubmitState('error');
-      setSubmitMessage(message);
     }
   };
 
@@ -325,298 +170,89 @@ export default function Contact() {
             </div>
           </div>
           <div className="rounded-[32px] bg-white text-slate-900 p-8 shadow-soft">
-            <form onSubmit={handleSubmit} className="grid gap-4">
-              <div className="grid sm:grid-cols-2 gap-4">
-                <div>
-                  <label className="text-sm font-medium text-slate-600">Nama</label>
-                  <input 
-                    type="text" 
-                    required 
-                    name="name"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    className="mt-1 w-full rounded-2xl border border-slate-200 px-4 py-3 focus:border-brand focus:ring-brand" 
-                    placeholder="Nama lengkap"
-                  />
-                </div>
-                <div>
-                  <label className="text-sm font-medium text-slate-600">Perusahaan</label>
-                  <input 
-                    type="text" 
-                    required
-                    name="company"
-                    value={company}
-                    onChange={(e) => setCompany(e.target.value)}
-                    className="mt-1 w-full rounded-2xl border border-slate-200 px-4 py-3 focus:border-brand focus:ring-brand" 
-                    placeholder="PT Anda"
-                  />
-                </div>
-              </div>
-              <div className="grid sm:grid-cols-2 gap-4">
-                <div>
-                  <label className="text-sm font-medium text-slate-600">Email</label>
-                  <input 
-                    type="email" 
-                    required 
-                    name="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="mt-1 w-full rounded-2xl border border-slate-200 px-4 py-3 focus:border-brand focus:ring-brand" 
-                    placeholder="email@perusahaan.com"
-                  />
-                </div>
-                <div>
-                  <label className="text-sm font-medium text-slate-600">No Handphone</label>
-                  <input 
-                    type="tel" 
-                    required
-                    name="phone"
-                    value={phone}
-                    onChange={(e) => {
-                      setPhone(e.target.value);
-                      if (requestErrors.phone) {
-                        setRequestErrors((prev) => ({ ...prev, phone: undefined }));
-                      }
-                    }}
-                    className="mt-1 w-full rounded-2xl border border-slate-200 px-4 py-3 focus:border-brand focus:ring-brand" 
-                    placeholder="08xxxxxxxxxx"
-                  />
-                  {requestErrors.phone && (
-                    <p className="mt-1 text-xs text-rose-500">{requestErrors.phone}</p>
-                  )}
-                </div>
-              </div>
-              <div className="grid sm:grid-cols-2 gap-4">
-                <div>
-                  <label className="text-sm font-medium text-slate-600">Lokasi Proyek</label>
-                  <input 
-                    type="text" 
-                    required
-                    name="project_location"
-                    value={projectLocation}
-                    onChange={(e) => setProjectLocation(e.target.value)}
-                    className="mt-1 w-full rounded-2xl border border-slate-200 px-4 py-3 focus:border-brand focus:ring-brand" 
-                    placeholder="Kota / Area"
-                  />
-                </div>
-                <div>
-                  <label className="text-sm font-medium text-slate-600">Perkiraan Luas</label>
-                  <div className="relative mt-1">
-                    <input
-                      type="text"
-                      inputMode="numeric"
-                      required
-                      name="area_estimate"
-                      value={areaEstimate}
-                      onChange={(e) => {
-                        setAreaEstimate(e.target.value);
-                        if (requestErrors.areaEstimate) {
-                          setRequestErrors((prev) => ({ ...prev, areaEstimate: undefined }));
-                        }
-                      }}
-                      className="w-full rounded-2xl border border-slate-200 px-4 py-3 pr-12 focus:border-brand focus:ring-brand"
-                      placeholder="2500"
-                    />
-                    <span className="pointer-events-none absolute inset-y-0 right-4 flex items-center text-sm text-slate-500">
-                      m2
-                    </span>
-                  </div>
-                  {requestErrors.areaEstimate && (
-                    <p className="mt-1 text-xs text-rose-500">{requestErrors.areaEstimate}</p>
-                  )}
-                </div>
+            <form onSubmit={handleCompanyProfileSubmit} className="grid gap-4">
+              <div>
+                <p className="text-sm font-semibold tracking-[0.3em] text-slate-500 uppercase">Unduh Company Profile</p>
+                <p className="mt-2 text-slate-600 text-sm">Isi data singkat di bawah ini untuk mengunduh dokumen resmi perusahaan.</p>
               </div>
               <div>
-                <label className="text-sm font-medium text-slate-600">Deskripsi Proyek</label>
-                <textarea 
-                  rows={4} 
-                  required
-                  name="project_description"
-                  value={projectDescription}
-                  onChange={(e) => setProjectDescription(e.target.value)}
-                  className="mt-1 w-full rounded-2xl border border-slate-200 px-4 py-3 focus:border-brand focus:ring-brand" 
-                  placeholder="Ruang lingkup, kebutuhan khusus, standar internal"
-                ></textarea>
+                <label className="text-sm font-medium text-slate-600">Nama</label>
+                <input
+                  type="text"
+                  className="mt-1 w-full rounded-2xl border border-slate-200 px-4 py-3 text-slate-900 placeholder-slate-400 focus:border-brand focus:ring-brand"
+                  placeholder="Nama lengkap"
+                  value={cpName}
+                  onChange={(e) => {
+                    setCpName(e.target.value);
+                    if (cpErrors.name) setCpErrors((prev) => ({ ...prev, name: undefined }));
+                  }}
+                />
+                {cpErrors.name && <p className="mt-1 text-xs text-rose-500">{cpErrors.name}</p>}
               </div>
-              
-              {/* Upload Lampiran */}
               <div>
-                <label className="text-sm font-medium text-slate-600">Lampiran Proyek (Opsional)</label>
-                <div className="mt-2 border-2 border-dashed border-gray-300 rounded-xl p-4 text-center hover:border-blue-400 transition-colors duration-300">
-                  <div className="mb-3">
-                    <svg className="w-8 h-8 text-gray-400 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
-                    </svg>
-                    <p className="text-sm text-gray-600 mb-1">Tambahkan lampiran proyek (maks. 5 file)</p>
-                    <p className="text-xs text-gray-500">Format: JPG, PNG, PDF, DWG, DXF (Maks. 5MB per file)</p>
-                  </div>
-                  
-                  <input
-                    type="file"
-                    multiple
-                    accept=".jpg,.jpeg,.png,.pdf,.dwg,.dxf,image/jpeg,image/png,application/pdf"
-                    onChange={handleFileSelect}
-                    className="hidden"
-                    id="project-images"
-                  />
-                  
-                  <label
-                    htmlFor="project-images"
-                    className="inline-flex items-center px-4 py-2 bg-gray-100 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-200 transition-colors duration-200 cursor-pointer"
-                  >
-                    <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                    </svg>
-                    Pilih File
-                  </label>
-                </div>
-                
-                {/* Preview Lampiran */}
-                {previews.length > 0 && (
-                  <div className="mt-4">
-                    <p className="text-sm font-medium text-slate-600 mb-2">Preview ({previews.length} file)</p>
-                    <div className="grid grid-cols-3 sm:grid-cols-4 gap-3">
-                      {previews.map((preview, index) => (
-                        <div key={index} className="relative group">
-                          <div className="aspect-square rounded-lg overflow-hidden border border-gray-200 bg-slate-50">
-                            {preview.kind === 'image' && preview.src ? (
-                              <img
-                                src={preview.src}
-                                alt={`Preview ${index + 1}`}
-                                className="w-full h-full object-cover"
-                              />
-                            ) : (
-                              <div className="flex h-full w-full flex-col items-center justify-center px-2 text-center">
-                                <FileDown className="h-6 w-6 text-slate-500" />
-                                <p className="mt-1 text-[11px] font-medium text-slate-700 line-clamp-2">{preview.name}</p>
-                                <p className="text-[10px] uppercase tracking-[0.15em] text-slate-500">{preview.ext || 'file'}</p>
-                              </div>
-                            )}
-                          </div>
-                          <button
-                            type="button"
-                            onClick={() => removeFile(index)}
-                            className="absolute -top-2 -right-2 w-5 h-5 bg-red-500 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200 hover:bg-red-600 text-xs"
-                          >
-                            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                            </svg>
-                          </button>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
+                <label className="text-sm font-medium text-slate-600">Nama Perusahaan</label>
+                <input
+                  type="text"
+                  className="mt-1 w-full rounded-2xl border border-slate-200 px-4 py-3 text-slate-900 placeholder-slate-400 focus:border-brand focus:ring-brand"
+                  placeholder="PT Anda"
+                  value={cpCompanyName}
+                  onChange={(e) => {
+                    setCpCompanyName(e.target.value);
+                    if (cpErrors.companyName) setCpErrors((prev) => ({ ...prev, companyName: undefined }));
+                  }}
+                />
+                {cpErrors.companyName && <p className="mt-1 text-xs text-rose-500">{cpErrors.companyName}</p>}
               </div>
-              {submitMessage && (
+              <div>
+                <label className="text-sm font-medium text-slate-600">Nomor WhatsApp</label>
+                <input
+                  type="tel"
+                  className="mt-1 w-full rounded-2xl border border-slate-200 px-4 py-3 text-slate-900 placeholder-slate-400 focus:border-brand focus:ring-brand"
+                  placeholder="08xxxxxxxxxx"
+                  value={cpWhatsapp}
+                  onChange={(e) => {
+                    setCpWhatsapp(e.target.value);
+                    if (cpErrors.whatsapp) setCpErrors((prev) => ({ ...prev, whatsapp: undefined }));
+                  }}
+                />
+                {cpErrors.whatsapp && <p className="mt-1 text-xs text-rose-500">{cpErrors.whatsapp}</p>}
+              </div>
+              <div>
+                <label className="text-sm font-medium text-slate-600">Kota / Area</label>
+                <input
+                  type="text"
+                  className="mt-1 w-full rounded-2xl border border-slate-200 px-4 py-3 text-slate-900 placeholder-slate-400 focus:border-brand focus:ring-brand"
+                  placeholder="Kota / Area"
+                  value={cpCity}
+                  onChange={(e) => {
+                    setCpCity(e.target.value);
+                    if (cpErrors.city) setCpErrors((prev) => ({ ...prev, city: undefined }));
+                  }}
+                />
+                {cpErrors.city && <p className="mt-1 text-xs text-rose-500">{cpErrors.city}</p>}
+              </div>
+              {cpMessage && (
                 <div
-                  className={`rounded-xl px-4 py-3 text-sm ${
-                    submitState === 'success'
-                      ? 'bg-emerald-50 text-emerald-700'
-                      : 'bg-rose-50 text-rose-700'
+                  className={`rounded-xl px-4 py-2 text-sm ${
+                    cpStatus === 'success' ? 'bg-emerald-50 text-emerald-700' : 'bg-rose-50 text-rose-700'
                   }`}
                 >
-                  {submitMessage}
+                  {cpMessage}
                 </div>
               )}
-              <button 
-                type="submit"
-                className="rounded-2xl bg-brand px-6 py-3 text-white font-semibold hover:bg-brand/90 disabled:opacity-70"
-                disabled={submitState === 'submitting'}
-              >
-                {submitState === 'submitting' ? 'Mengirim...' : 'Kirim Permintaan'}
-              </button>
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <p className="text-xs text-slate-500">Data Anda hanya digunakan untuk keperluan tindak lanjut dan arsip internal.</p>
+                <button
+                  type="submit"
+                  disabled={cpStatus === 'submitting'}
+                  className="inline-flex items-center gap-2 rounded-xl bg-accent px-4 py-2 text-sm font-semibold text-white shadow-soft hover:opacity-90 disabled:opacity-60"
+                >
+                  <FileDown className="w-4 h-4" />
+                  {cpStatus === 'submitting' ? 'Memproses...' : 'Unduh PDF'}
+                </button>
+              </div>
             </form>
           </div>
-        </div>
-
-        {/* Unduh Company Profile */}
-        <div className="mt-8 rounded-3xl border border-white/20 bg-white/5 p-6">
-          <form onSubmit={handleCompanyProfileSubmit}>
-            <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6">
-              <div>
-                <p className="text-sm font-semibold tracking-[0.3em] text-white/60 uppercase">Unduh Company Profile</p>
-                <p className="mt-2 text-white/80 text-sm">Isi data singkat di bawah ini untuk mengunduh dokumen resmi perusahaan.</p>
-              </div>
-              <div className="w-full lg:w-auto grid sm:grid-cols-4 gap-3">
-                <div>
-                  <input
-                    type="text"
-                    className={`w-full rounded-2xl border bg-white/10 px-4 py-3 text-white placeholder-white/60 focus:outline-none focus:ring-1 ${
-                      cpErrors.name ? 'border-rose-300/80 focus:ring-rose-200' : 'border-white/20 focus:ring-white/50'
-                    }`}
-                    placeholder="Nama"
-                    value={cpName}
-                    onChange={(e) => {
-                      setCpName(e.target.value);
-                      if (cpErrors.name) setCpErrors((prev) => ({ ...prev, name: undefined }));
-                    }}
-                  />
-                  {cpErrors.name && <p className="mt-1 text-xs text-rose-200">{cpErrors.name}</p>}
-                </div>
-                <div>
-                  <input
-                    type="tel"
-                    className={`w-full rounded-2xl border bg-white/10 px-4 py-3 text-white placeholder-white/60 focus:outline-none focus:ring-1 ${
-                      cpErrors.phone ? 'border-rose-300/80 focus:ring-rose-200' : 'border-white/20 focus:ring-white/50'
-                    }`}
-                    placeholder="Nomor HP"
-                    value={cpPhone}
-                    onChange={(e) => {
-                      setCpPhone(e.target.value);
-                      if (cpErrors.phone) setCpErrors((prev) => ({ ...prev, phone: undefined }));
-                    }}
-                  />
-                  {cpErrors.phone && <p className="mt-1 text-xs text-rose-200">{cpErrors.phone}</p>}
-                </div>
-                <div>
-                  <input
-                    type="tel"
-                    className="w-full rounded-2xl border bg-white/10 px-4 py-3 text-white placeholder-white/60 focus:outline-none focus:ring-1 border-white/20 focus:ring-white/50"
-                    placeholder="No Perusahaan"
-                    value={cpCompanyPhone}
-                    onChange={(e) => setCpCompanyPhone(e.target.value)}
-                  />
-                  <p className="mt-1 text-xs text-white/60">Kosongkan jika keperluan pribadi.</p>
-                </div>
-                <div>
-                  <input
-                    type="text"
-                    className={`w-full rounded-2xl border bg-white/10 px-4 py-3 text-white placeholder-white/60 focus:outline-none focus:ring-1 ${
-                      cpErrors.domicile ? 'border-rose-300/80 focus:ring-rose-200' : 'border-white/20 focus:ring-white/50'
-                    }`}
-                    placeholder="Domisili"
-                    value={cpDomisili}
-                    onChange={(e) => {
-                      setCpDomisili(e.target.value);
-                      if (cpErrors.domicile) setCpErrors((prev) => ({ ...prev, domicile: undefined }));
-                    }}
-                  />
-                  {cpErrors.domicile && <p className="mt-1 text-xs text-rose-200">{cpErrors.domicile}</p>}
-                </div>
-              </div>
-            </div>
-            {cpMessage && (
-              <div
-                className={`mt-4 rounded-xl px-4 py-2 text-sm ${
-                  cpStatus === 'success' ? 'bg-emerald-500/10 text-emerald-200' : 'bg-rose-500/10 text-rose-200'
-                }`}
-              >
-                {cpMessage}
-              </div>
-            )}
-            <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
-              <p className="text-xs text-white/60">Data Anda hanya digunakan untuk keperluan tindak lanjut dan arsip internal.</p>
-              <button
-                type="submit"
-                disabled={cpStatus === 'submitting'}
-                className="inline-flex items-center gap-2 rounded-xl bg-accent px-4 py-2 text-sm font-semibold text-white shadow-soft hover:opacity-90 disabled:opacity-60"
-              >
-                <FileDown className="w-4 h-4" />
-                {cpStatus === 'submitting' ? 'Memproses...' : 'Unduh PDF'}
-              </button>
-            </div>
-          </form>
         </div>
       </div>
     </section>

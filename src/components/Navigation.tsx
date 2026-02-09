@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useState } from 'react';
 
@@ -71,12 +72,12 @@ export default function Navigation() {
           </nav>
           
           <div className="hidden md:flex items-center gap-3">
-            <button 
-              onClick={() => navigateToSection('contact')} 
+            <Link 
+              href="/get-quote"
               className="inline-flex items-center gap-2 rounded-xl bg-accent px-4 py-2 text-sm font-semibold text-white shadow-soft hover:opacity-90"
             >
               Get A Quote
-            </button>
+            </Link>
           </div>
           
           <button 
@@ -98,9 +99,13 @@ export default function Navigation() {
               <button onClick={() => navigateToSection('news')}>Update & News</button>
               <button onClick={() => navigateToSection('contact')}>Contact us</button>
             </nav>
-            <a href="tel:+62318765432" className="mt-4 inline-flex items-center gap-2 rounded-xl bg-accent px-4 py-2 font-semibold text-white">
-              Hubungi Kami
-            </a>
+            <Link
+              href="/get-quote"
+              onClick={() => setIsMenuOpen(false)}
+              className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-accent px-4 py-2 font-semibold text-white"
+            >
+              Get a Quote
+            </Link>
           </div>
         )}
       </div>
