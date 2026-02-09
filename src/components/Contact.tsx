@@ -172,15 +172,15 @@ export default function Contact() {
           <div className="rounded-[32px] bg-white text-slate-900 p-8 shadow-soft">
             <form onSubmit={handleCompanyProfileSubmit} className="grid gap-4">
               <div>
-                <p className="text-sm font-semibold tracking-[0.3em] text-slate-500 uppercase">Unduh Company Profile</p>
-                <p className="mt-2 text-slate-600 text-sm">Isi data singkat di bawah ini untuk mengunduh dokumen resmi perusahaan.</p>
+                <p className="text-lg font-bold text-slate-900 text-center">Unduh Company Profile</p>
+                <p className="mt-1 text-xs text-slate-500 text-center whitespace-nowrap">Isi data singkat di bawah ini untuk mengunduh dokumen resmi perusahaan.</p>
               </div>
               <div>
-                <label className="text-sm font-medium text-slate-600">Nama</label>
+                <label className="text-sm font-semibold text-slate-600">Nama :</label>
                 <input
                   type="text"
-                  className="mt-1 w-full rounded-2xl border border-slate-200 px-4 py-3 text-slate-900 placeholder-slate-400 focus:border-brand focus:ring-brand"
-                  placeholder="Nama lengkap"
+                  className="mt-1 w-full h-10 rounded-2xl border border-slate-200 px-4 text-sm text-slate-900 placeholder-slate-400 focus:border-brand focus:ring-brand"
+                  placeholder="Nama Anda"
                   value={cpName}
                   onChange={(e) => {
                     setCpName(e.target.value);
@@ -190,11 +190,11 @@ export default function Contact() {
                 {cpErrors.name && <p className="mt-1 text-xs text-rose-500">{cpErrors.name}</p>}
               </div>
               <div>
-                <label className="text-sm font-medium text-slate-600">Nama Perusahaan</label>
+                <label className="text-sm font-semibold text-slate-600">Nama Perusahaan :</label>
                 <input
                   type="text"
-                  className="mt-1 w-full rounded-2xl border border-slate-200 px-4 py-3 text-slate-900 placeholder-slate-400 focus:border-brand focus:ring-brand"
-                  placeholder="PT Anda"
+                  className="mt-1 w-full h-10 rounded-2xl border border-slate-200 px-4 text-sm text-slate-900 placeholder-slate-400 focus:border-brand focus:ring-brand"
+                  placeholder="Nama Instansi"
                   value={cpCompanyName}
                   onChange={(e) => {
                     setCpCompanyName(e.target.value);
@@ -204,10 +204,10 @@ export default function Contact() {
                 {cpErrors.companyName && <p className="mt-1 text-xs text-rose-500">{cpErrors.companyName}</p>}
               </div>
               <div>
-                <label className="text-sm font-medium text-slate-600">Nomor WhatsApp</label>
+                <label className="text-sm font-semibold text-slate-600">Nomor WhatsApp :</label>
                 <input
                   type="tel"
-                  className="mt-1 w-full rounded-2xl border border-slate-200 px-4 py-3 text-slate-900 placeholder-slate-400 focus:border-brand focus:ring-brand"
+                  className="mt-1 w-full h-10 rounded-2xl border border-slate-200 px-4 text-sm text-slate-900 placeholder-slate-400 focus:border-brand focus:ring-brand"
                   placeholder="08xxxxxxxxxx"
                   value={cpWhatsapp}
                   onChange={(e) => {
@@ -218,10 +218,10 @@ export default function Contact() {
                 {cpErrors.whatsapp && <p className="mt-1 text-xs text-rose-500">{cpErrors.whatsapp}</p>}
               </div>
               <div>
-                <label className="text-sm font-medium text-slate-600">Kota / Area</label>
+                <label className="text-sm font-semibold text-slate-600">Lokasi :</label>
                 <input
                   type="text"
-                  className="mt-1 w-full rounded-2xl border border-slate-200 px-4 py-3 text-slate-900 placeholder-slate-400 focus:border-brand focus:ring-brand"
+                  className="mt-1 w-full h-10 rounded-2xl border border-slate-200 px-4 text-sm text-slate-900 placeholder-slate-400 focus:border-brand focus:ring-brand"
                   placeholder="Kota / Area"
                   value={cpCity}
                   onChange={(e) => {
