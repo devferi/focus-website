@@ -17,7 +17,12 @@ type ProjectImage = {
 type Project = {
   id: number;
   title: string;
-  sector: string;
+  sector?: string;
+  sectors?: {
+    id: number;
+    name: string;
+    slug: string;
+  }[];
   is_active?: boolean;
   images?: ProjectImage[];
 };
@@ -74,7 +79,15 @@ function PortfolioPageContent() {
   const matchedSector = findSectorLabelBySlug(sectorSlug);
   const filteredProjects = useMemo(() => {
     if (!sectorSlug) return projects;
-    return projects.filter((item) => slugifySector(item.sector) === sectorSlug);
+    return projects.filter((item) => {
+      if (item.sectors?.length) {
+        return item.sectors.some((sector) => sector.slug?.toLowerCase() === sectorSlug);
+      }
+      if (item.sector) {
+        return slugifySector(item.sector) === sectorSlug;
+      }
+      return false;
+    });
   }, [projects, sectorSlug]);
 
   return (
