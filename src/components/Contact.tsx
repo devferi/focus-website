@@ -169,17 +169,17 @@ export default function Contact() {
               </div>
             </div>
           </div>
-          <div className="rounded-[32px] bg-white text-slate-900 p-8 shadow-soft">
+          <div className="rounded-[32px] border border-white/20 bg-white/5 p-8 text-white shadow-soft">
             <form onSubmit={handleCompanyProfileSubmit} className="grid gap-4">
               <div>
-                <p className="text-lg font-bold text-slate-900 text-center">Unduh Company Profile</p>
-                <p className="mt-1 text-xs text-slate-500 text-center whitespace-nowrap">Isi data singkat di bawah ini untuk mengunduh dokumen resmi perusahaan.</p>
+                <p className="text-lg font-bold text-white text-center">Unduh Company Profile</p>
+                <p className="mt-1 text-xs text-white/70 text-center whitespace-nowrap">Isi data singkat di bawah ini untuk mengunduh dokumen resmi perusahaan.</p>
               </div>
               <div>
-                <label className="text-sm font-semibold text-slate-600">Nama :</label>
+                <label className="text-sm font-semibold text-white">Nama :</label>
                 <input
                   type="text"
-                  className="mt-1 w-full h-10 rounded-2xl border border-slate-200 px-4 text-sm text-slate-900 placeholder-slate-400 focus:border-brand focus:ring-brand"
+                  className="mt-1 w-full h-10 rounded-2xl border border-white/20 bg-white/10 px-4 text-sm text-white placeholder-white/60 focus:border-white/40 focus:ring-white/40"
                   placeholder="Nama Anda"
                   value={cpName}
                   onChange={(e) => {
@@ -187,13 +187,13 @@ export default function Contact() {
                     if (cpErrors.name) setCpErrors((prev) => ({ ...prev, name: undefined }));
                   }}
                 />
-                {cpErrors.name && <p className="mt-1 text-xs text-rose-500">{cpErrors.name}</p>}
+                {cpErrors.name && <p className="mt-1 text-xs text-rose-200">{cpErrors.name}</p>}
               </div>
               <div>
-                <label className="text-sm font-semibold text-slate-600">Nama Perusahaan :</label>
+                <label className="text-sm font-semibold text-white">Nama Perusahaan :</label>
                 <input
                   type="text"
-                  className="mt-1 w-full h-10 rounded-2xl border border-slate-200 px-4 text-sm text-slate-900 placeholder-slate-400 focus:border-brand focus:ring-brand"
+                  className="mt-1 w-full h-10 rounded-2xl border border-white/20 bg-white/10 px-4 text-sm text-white placeholder-white/60 focus:border-white/40 focus:ring-white/40"
                   placeholder="Nama Instansi"
                   value={cpCompanyName}
                   onChange={(e) => {
@@ -201,13 +201,13 @@ export default function Contact() {
                     if (cpErrors.companyName) setCpErrors((prev) => ({ ...prev, companyName: undefined }));
                   }}
                 />
-                {cpErrors.companyName && <p className="mt-1 text-xs text-rose-500">{cpErrors.companyName}</p>}
+                {cpErrors.companyName && <p className="mt-1 text-xs text-rose-200">{cpErrors.companyName}</p>}
               </div>
               <div>
-                <label className="text-sm font-semibold text-slate-600">Nomor WhatsApp :</label>
+                <label className="text-sm font-semibold text-white">Nomor WhatsApp :</label>
                 <input
                   type="tel"
-                  className="mt-1 w-full h-10 rounded-2xl border border-slate-200 px-4 text-sm text-slate-900 placeholder-slate-400 focus:border-brand focus:ring-brand"
+                  className="mt-1 w-full h-10 rounded-2xl border border-white/20 bg-white/10 px-4 text-sm text-white placeholder-white/60 focus:border-white/40 focus:ring-white/40"
                   placeholder="08xxxxxxxxxx"
                   value={cpWhatsapp}
                   onChange={(e) => {
@@ -215,13 +215,13 @@ export default function Contact() {
                     if (cpErrors.whatsapp) setCpErrors((prev) => ({ ...prev, whatsapp: undefined }));
                   }}
                 />
-                {cpErrors.whatsapp && <p className="mt-1 text-xs text-rose-500">{cpErrors.whatsapp}</p>}
+                {cpErrors.whatsapp && <p className="mt-1 text-xs text-rose-200">{cpErrors.whatsapp}</p>}
               </div>
               <div>
-                <label className="text-sm font-semibold text-slate-600">Lokasi :</label>
+                <label className="text-sm font-semibold text-white">Lokasi :</label>
                 <input
                   type="text"
-                  className="mt-1 w-full h-10 rounded-2xl border border-slate-200 px-4 text-sm text-slate-900 placeholder-slate-400 focus:border-brand focus:ring-brand"
+                  className="mt-1 w-full h-10 rounded-2xl border border-white/20 bg-white/10 px-4 text-sm text-white placeholder-white/60 focus:border-white/40 focus:ring-white/40"
                   placeholder="Kota / Area"
                   value={cpCity}
                   onChange={(e) => {
@@ -229,19 +229,19 @@ export default function Contact() {
                     if (cpErrors.city) setCpErrors((prev) => ({ ...prev, city: undefined }));
                   }}
                 />
-                {cpErrors.city && <p className="mt-1 text-xs text-rose-500">{cpErrors.city}</p>}
+                {cpErrors.city && <p className="mt-1 text-xs text-rose-200">{cpErrors.city}</p>}
               </div>
               {cpMessage && (
                 <div
                   className={`rounded-xl px-4 py-2 text-sm ${
-                    cpStatus === 'success' ? 'bg-emerald-50 text-emerald-700' : 'bg-rose-50 text-rose-700'
+                    cpStatus === 'success' ? 'bg-emerald-500/10 text-emerald-200' : 'bg-rose-500/10 text-rose-200'
                   }`}
                 >
                   {cpMessage}
                 </div>
               )}
               <div className="flex flex-wrap items-center justify-between gap-3">
-                <p className="text-xs text-slate-500">Data Anda hanya digunakan untuk keperluan tindak lanjut dan arsip internal.</p>
+                <p className="text-xs text-white/60">Data Anda hanya digunakan untuk keperluan tindak lanjut dan arsip internal.</p>
                 <button
                   type="submit"
                   disabled={cpStatus === 'submitting'}

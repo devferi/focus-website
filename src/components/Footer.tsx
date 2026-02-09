@@ -13,7 +13,7 @@ export default function Footer() {
   return (
     <footer className="bg-brand-dark text-white/70">
       <div className="mx-auto max-w-6xl px-4">
-        <div className="flex flex-wrap items-center justify-between gap-6 border-b border-white/10 py-8">
+        <div className="flex flex-wrap items-center justify-between gap-6 border-b border-white/10 py-3">
           <div>
             <p className="text-sm uppercase tracking-[0.3em] text-white/50">CV. Focus Trading Contractor</p>
             <p className="mt-2 text-white text-lg font-semibold">• Design & Build • Acoustic Project • Finishing Contractor • Infrastructure</p>
@@ -24,7 +24,7 @@ export default function Footer() {
             <Link href="/#contact" className="hover:text-white">Kontak</Link>
           </div>
         </div>
-        <div className="flex flex-wrap items-center justify-between gap-4 py-6 text-sm">
+        <div className="flex flex-wrap items-center justify-between gap-3 py-3 text-sm">
           <div className="flex flex-col gap-1">
             <p>© Update {year} Seluruh hak cipta. CV. Focus Trading Contractor. </p>
             <p>
