@@ -46,6 +46,7 @@ const getPrimaryImage = (images?: ProjectImage[]) => {
 function PortfolioPageContent() {
   const [projects, setProjects] = useState<Project[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [showBack, setShowBack] = useState(false);
   const searchParams = useSearchParams();
   const sectorSlug = (searchParams.get('sector') ?? '').trim().toLowerCase();
 
@@ -74,6 +75,16 @@ function PortfolioPageContent() {
 
     loadProjects();
     return () => controller.abort();
+  }, []);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setShowBack(window.scrollY > window.innerHeight);
+    };
+
+    handleScroll();
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   const matchedSector = findSectorLabelBySlug(sectorSlug);
@@ -177,6 +188,15 @@ function PortfolioPageContent() {
         </div>
         </section>
       </main>
+      {showBack && (
+        <Link
+          href="/#services"
+          className="fixed bottom-24 right-6 z-40 inline-flex items-center gap-2 rounded-full bg-[#FFBD00] px-5 py-3 text-slate-900 shadow-soft border border-white/10 hover:bg-[#e0a800] transition"
+        >
+          <span aria-hidden="true">↑</span>
+          Kembali ke Layanan
+        </Link>
+      )}
       <Footer />
     </>
   );
