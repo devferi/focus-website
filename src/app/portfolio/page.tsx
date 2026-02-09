@@ -105,13 +105,6 @@ function PortfolioPageContent() {
     <>
       <main className="min-h-screen bg-slate-50 pt-28 pb-20">
         <section className="mx-auto max-w-6xl px-4">
-        <Link
-          href="/#services"
-          className="inline-flex items-center gap-2 text-sm font-medium text-slate-500 hover:text-slate-900"
-        >
-          <span aria-hidden="true">←</span>
-          Kembali
-        </Link>
         <p className="mt-3 text-sm font-semibold tracking-[0.3em] text-slate-500 uppercase">Portfolio</p>
         <h1 className="mt-3 text-3xl md:text-4xl font-bold text-slate-900">Portfolio Proyek</h1>
         <p className="mt-2 text-slate-600 max-w-3xl">
@@ -193,8 +186,8 @@ function PortfolioPageContent() {
           href="/#services"
           className="fixed bottom-24 right-6 z-40 inline-flex items-center gap-2 rounded-full bg-[#FFBD00] px-5 py-3 text-slate-900 shadow-soft border border-white/10 hover:bg-[#e0a800] transition"
         >
-          <span aria-hidden="true">↑</span>
-          Kembali ke Layanan
+          <span aria-hidden="true">←</span>
+          kembali ke layanan
         </Link>
       )}
       <Footer />
