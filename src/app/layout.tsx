@@ -53,6 +53,13 @@ function gtag(){dataLayer.push(arguments);}
 gtag('js', new Date());
 gtag('config', 'AW-17944652748');`}
         </Script>
+        <Script id="gtag-conversion" strategy="afterInteractive">
+          {`gtag('event', 'conversion', {
+  'send_to': 'AW-17944652748/mPqcCM3inPYbEMzX1uxC',
+  'value': 1.0,
+  'currency': 'IDR'
+});`}
+        </Script>
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-slate-50`}
