@@ -241,7 +241,9 @@ export default function ProjectRequestForm() {
           />
         </div>
         <div>
-          <label className="text-sm font-semibold text-white">Perkiraan Luas :</label>
+          <label className="text-sm font-semibold text-white">
+            Perkiraan Luas : <span className="italic">( wajib diisi )</span>
+          </label>
           <div className="mt-1 flex items-center gap-2">
             <input
               type="text"
@@ -255,8 +257,8 @@ export default function ProjectRequestForm() {
                   setRequestErrors((prev) => ({ ...prev, areaEstimate: undefined }));
                 }
               }}
-              className="w-40 sm:w-48 rounded-2xl border border-white/20 bg-white/10 px-4 py-3 text-white placeholder-white/60 focus:border-white/40 focus:ring-white/40"
-              placeholder="2500"
+              className="w-40 sm:w-48 rounded-2xl border border-white/20 bg-white/10 px-4 py-3 text-white placeholder-rose-300 placeholder:italic placeholder:text-xs focus:border-white/40 focus:ring-white/40"
+              placeholder="* Estimasi Volume"
             />
             <select
               value={areaUnit}
@@ -264,9 +266,9 @@ export default function ProjectRequestForm() {
               className="h-10 rounded-2xl border border-white/20 bg-white/10 px-3 text-sm text-white focus:border-white/40 focus:ring-white/40"
               aria-label="Satuan luas"
             >
-              <option value="m1">m1</option>
-              <option value="m2">m²</option>
-              <option value="m3">m3</option>
+              <option value="m1" className="text-slate-900 bg-white">m¹</option>
+              <option value="m2" className="text-slate-900 bg-white">m²</option>
+              <option value="m3" className="text-slate-900 bg-white">m³</option>
             </select>
           </div>
           {requestErrors.areaEstimate && (
